@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Document</title>
+    </head>
+    <body>
+        <canvas id="canvas"></canvas>
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="keyboardListener.js"></script>
+        <script src="renderScreen.js"></script>
+        <script>
+            var socket = io();
+    
+            state = {
+                myself: {},
+                aroundPlayer: {}
+            }
+            socket.on('connect', (playerID) => {
+                state.myself.playerID = socket.id
+                console.log("Your ID is:",state.myself.playerID)
+                socket.emit('playerConnect',state.myself.playerID)
+                
+                subscribe((command) => {
+                    socket.emit('move-player', command)
+                })
+            })
+            socket.on('playerAdded', (command) => {
+                state.myself.x = command.myself.x
+                state.myself.y = command.myself.y
+                localRenderScreen()
+            })
+
+        </script>
+    </body>
+</html>
