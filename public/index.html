@@ -9,6 +9,7 @@
     <body>
         <canvas id="canvas"></canvas>
         <script src="/socket.io/socket.io.js"></script>
+        <script src="quadtree.js"></script>
         <script src="keyboardListener.js"></script>
         <script src="renderScreen.js"></script>
         <script>
@@ -16,7 +17,7 @@
     
             state = {
                 myself: {},
-                aroundPlayer: {}
+                aroundPlayer: {},
             }
             socket.on('connect', (playerID) => {
                 state.myself.playerID = socket.id
@@ -33,6 +34,27 @@
                 localRenderScreen()
             })
 
+
+            socket.on('renderScreen', (command) => {
+                const myself = state.myself
+                const qtree = command.aroundPlayer
+
+                for(var i = 0; i < ViewX; i++){
+                    for(var j = 0; j < ViewY; j++){
+                        var X = myself.x+i-ViewX/2
+                        var Y = myself.y+j-ViewY/2
+                        let range = new Rectangle(X, Y, 1, 1);
+                        let playerView = qtree.query(range);
+                        for(p in playerView){
+                            console.log(p)
+                            context.fillStyle = 'black'
+                            context.fillRect(p.x*GRID,p.y*GRID,GRID,GRID)
+                        }
+                        
+                    }
+                }
+
+            })
         </script>
     </body>
 </html>

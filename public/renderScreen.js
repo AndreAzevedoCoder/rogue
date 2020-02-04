@@ -9,23 +9,25 @@ const ViewY = 18
 function localRenderScreen(){
     const myself = state.myself
     context.clearRect(0,0,1280,720)
-    
-    for(var i = 0; i < ViewX; i++){
-        for(var j = 0; j < ViewY; j++){
-            var X = myself.x+i-ViewX/2
-            var Y = myself.y+j-ViewY/2
+    context.fillStyle = 'gray'
+    context.fillRect(0,0,1280,720)
+    // for(var i = 0; i < ViewX; i++){
+    //     for(var j = 0; j < ViewY; j++){
+    //         var X = myself.x+i-ViewX/2
+    //         var Y = myself.y+j-ViewY/2
 
-            if(X % 2 !== 0){
-                context.fillStyle = 'white'
-                context.fillRect(X*GRID,Y*GRID,GRID,GRID)
-            }
-            if(X % 2 === 0){
-                context.fillStyle = 'black'
-                context.fillRect(X*GRID,Y*GRID,GRID,GRID)
-            }
-        }
-    }
+    //         if(X % 2 !== 0){
+    //             context.fillStyle = 'white'
+    //             context.fillRect(X*GRID,Y*GRID,GRID,GRID)
+    //         }
+    //         if(X % 2 === 0){
+    //             context.fillStyle = 'black'
+    //             context.fillRect(X*GRID,Y*GRID,GRID,GRID)
+    //         }
+    //     }
+    // }
+
     context.fillStyle = 'yellow'
-    context.fillRect(16*GRID,9*GRID,GRID,GRID)
+    context.fillRect((canvas.width/GRID * 0.5)*GRID,(canvas.height/GRID * 0.5)*GRID,GRID,GRID)
 
 }
