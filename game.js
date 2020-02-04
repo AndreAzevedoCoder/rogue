@@ -26,9 +26,9 @@ function start(){
 
 
 function addPlayer(playerID){
-    var spawnRoom = state.dungeon.rooms[Math.floor( Math.random()*roomCount)]
-    playerX = spawnRoom.x
-    playerY = spawnRoom.y
+    //var spawnRoom = state.dungeon.rooms[Math.floor( Math.random()*roomCount)]
+    playerX = 10//spawnRoom.x
+    playerY = 10//spawnRoom.y
     state.players[playerID] = ({
         x: playerX,
         y: playerY,
@@ -47,8 +47,9 @@ function renderScreen(playerID){
     player = state.players[playerID]
     playerX = player.x
     playerY = player.y
-    let range = new dungeonGenerator.Rectangle(playerX-16, playerY-9, 32, 18);
+    let range = new dungeonGenerator.Rectangle(playerX, playerY, 32, 18);
     let playerView = state.dungeon.qtree.query(range);
+    console.log(playerView)
     notifyAll({
         type: 'renderScreen',
         sendTo: 'player',

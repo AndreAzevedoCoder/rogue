@@ -8,9 +8,9 @@ const ViewY = 18
 
 function localRenderScreen(){
     const myself = state.myself
-    context.clearRect(0,0,1280,720)
-    context.fillStyle = 'gray'
-    context.fillRect(0,0,1280,720)
+    // context.clearRect(0,0,1280,720)
+    // context.fillStyle = 'gray'
+    // context.fillRect(0,0,1280,720)
     // for(var i = 0; i < ViewX; i++){
     //     for(var j = 0; j < ViewY; j++){
     //         var X = myself.x+i-ViewX/2

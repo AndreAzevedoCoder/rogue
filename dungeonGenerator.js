@@ -668,8 +668,9 @@ function start(width,height,roomCount){
     let boundary = new Rectangle(width / 2, height / 2, width / 2, height / 2);
     dungeon.qtree = QuadTree.create(boundary);
 
-    fillDungeon(width,height)
-    buildRooms(roomCount,width,height)
+    insertObject(0,20,{type: 'floor'})
+    // fillDungeon(width,height)
+    // buildRooms(roomCount,width,height)
 
     return dungeon;
 }

@@ -5,6 +5,12 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <title>Document</title>
+        <style>
+            *{
+                margin: 0;
+                padding: 0;
+            }
+        </style>
     </head>
     <body>
         <canvas id="canvas"></canvas>
@@ -12,6 +18,7 @@
         <script src="quadtree.js"></script>
         <script src="keyboardListener.js"></script>
         <script src="renderScreen.js"></script>
+        
         <script>
             var socket = io();
     
@@ -37,22 +44,26 @@
 
             socket.on('renderScreen', (command) => {
                 const myself = state.myself
-                const qtree = command.aroundPlayer
+                var playerView = command.aroundPlayer
 
-                for(var i = 0; i < ViewX; i++){
-                    for(var j = 0; j < ViewY; j++){
-                        var X = myself.x+i-ViewX/2
-                        var Y = myself.y+j-ViewY/2
-                        let range = new Rectangle(X, Y, 1, 1);
-                        let playerView = qtree.query(range);
-                        for(p in playerView){
-                            console.log(p)
-                            context.fillStyle = 'black'
-                            context.fillRect(p.x*GRID,p.y*GRID,GRID,GRID)
-                        }
-                        
+                for(var i = 0; i < playerView.length; i++){
+                    var p = playerView[i]
+                    var X = (canvas.width/2-myself.x)+myself.x+p.x
+                    var Y = (canvas.height/2-myself.y)+myself.x+p.y
+                    if(p.userData.type == 'floor' ){
+                        context.fillStyle = 'black'
+                        context.fillRect(X,Y,GRID,GRID)
+                        console.log(X,Y)
+                        console.log(p)
+                        console.log(myself.x,myself.y)
+                    }
+                    if(p.userData.type == 'hall'){
+                        context.fillStyle = 'blue'
+                        context.fillRect((p.x)*GRID,(p.y)*GRID,GRID,GRID)
                     }
                 }
+                context.fillStyle = 'yellow'
+                context.fillRect((canvas.width/GRID * 0.5)*GRID,(canvas.height/GRID * 0.5)*GRID,GRID,GRID)
 
             })
         </script>
