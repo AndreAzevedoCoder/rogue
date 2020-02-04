@@ -27,8 +27,8 @@ function start(){
 
 function addPlayer(playerID){
     //var spawnRoom = state.dungeon.rooms[Math.floor( Math.random()*roomCount)]
-    playerX = 10//spawnRoom.x
-    playerY = 10//spawnRoom.y
+    playerX = 500//spawnRoom.x
+    playerY = 500//spawnRoom.y
     state.players[playerID] = ({
         x: playerX,
         y: playerY,
@@ -47,9 +47,8 @@ function renderScreen(playerID){
     player = state.players[playerID]
     playerX = player.x
     playerY = player.y
-    let range = new dungeonGenerator.Rectangle(playerX, playerY, 32, 18);
+    let range = new dungeonGenerator.Rectangle(playerX, playerY, 350, 200);
     let playerView = state.dungeon.qtree.query(range);
-    console.log(playerView)
     notifyAll({
         type: 'renderScreen',
         sendTo: 'player',
@@ -65,14 +64,27 @@ function removePlayer(playerID){
 var lastUpdateInput = null;
 var penultUpdateInput = null;
 function handleClientInput(input){
+    const velocity = 14
+    console.log(input.playerID)
     if(penultUpdateInput == null){
         penultUpdateInput = input
     }else if(lastUpdateInput == null){
         lastUpdateInput = input
 
+        if(input.keyDowns['w'] == true){
+            state.players[input.playerID].y -= velocity
+        }
+        if(input.keyDowns['s'] == true){
+            state.players[input.playerID].y += velocity
+        }
+        if(input.keyDowns['d'] == true){
+            state.players[input.playerID].x += velocity
+        }
+        if(input.keyDowns['a'] == true){
+            state.players[input.playerID].x -= velocity
+        }
 
-
-
+        renderScreen(input.playerID)
         lastUpdateInput = null;
         penultUpdateInput = null;
     }

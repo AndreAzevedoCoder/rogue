@@ -31,34 +31,35 @@ document.addEventListener('keyup',function(e){
 },true);
 
 const timeMove = 0;
-const velocity = 0.25
+const velocity = 14
 function sendInput(){
     if(Object.entries(keyDowns).length !== 0){
         const command = {
             type: 'move-player',
-            playerId: state.myself.playerID,
+            playerID: state.myself.playerID,
             startTime: Date.now(),
             keyDowns
         }
         socket.emit('clientInput', command)
 
         if(keyDowns['w'] == true){
-            state.myself.y += velocity
+            state.myself.y -= velocity
+            localRenderScreen()
         }
         if(keyDowns['s'] == true){
-            state.myself.y -= velocity
+            state.myself.y += velocity
+            localRenderScreen()
         }
         if(keyDowns['d'] == true){
-            state.myself.x -= velocity
+            state.myself.x += velocity
+            localRenderScreen()
         }
         if(keyDowns['a'] == true){
-            state.myself.x += velocity
+            state.myself.x -= velocity
+            localRenderScreen()
         }
-        localRenderScreen()
-        console.log(state.myself)
-
+        console.log(keyDowns)
     }
-
 }
 setInterval(sendInput,50)
 

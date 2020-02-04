@@ -13,10 +13,11 @@
         </style>
     </head>
     <body>
-        <canvas id="canvas"></canvas>
+        <canvas id="canvas"  width="640" height="360" style="width:1280px;height:720px;"  ></canvas>
         <script src="/socket.io/socket.io.js"></script>
         <script src="quadtree.js"></script>
         <script src="keyboardListener.js"></script>
+        <script src="loadImages.js"></script>
         <script src="renderScreen.js"></script>
         
         <script>
@@ -44,26 +45,9 @@
 
             socket.on('renderScreen', (command) => {
                 const myself = state.myself
-                var playerView = command.aroundPlayer
+                state.aroundPlayer = command.aroundPlayer
 
-                for(var i = 0; i < playerView.length; i++){
-                    var p = playerView[i]
-                    var X = (canvas.width/2-myself.x)+myself.x+p.x
-                    var Y = (canvas.height/2-myself.y)+myself.x+p.y
-                    if(p.userData.type == 'floor' ){
-                        context.fillStyle = 'black'
-                        context.fillRect(X,Y,GRID,GRID)
-                        console.log(X,Y)
-                        console.log(p)
-                        console.log(myself.x,myself.y)
-                    }
-                    if(p.userData.type == 'hall'){
-                        context.fillStyle = 'blue'
-                        context.fillRect((p.x)*GRID,(p.y)*GRID,GRID,GRID)
-                    }
-                }
-                context.fillStyle = 'yellow'
-                context.fillRect((canvas.width/GRID * 0.5)*GRID,(canvas.height/GRID * 0.5)*GRID,GRID,GRID)
+                localRenderScreen()
 
             })
         </script>
