@@ -39,14 +39,15 @@
             socket.on('playerAdded', (command) => {
                 state.myself.x = command.myself.x
                 state.myself.y = command.myself.y
+                state.myself.moveTimer = 0;
                 localRenderScreen()
             })
 
 
             socket.on('renderScreen', (command) => {
-                const myself = state.myself
+                const myself = command.myself
                 state.aroundPlayer = command.aroundPlayer
-
+                console.log("server mando")
                 localRenderScreen()
                 requestAnimFrame()
 
@@ -66,7 +67,7 @@
                 lastCalledTime = Date.now();
                 fps = 1/delta;
                  
-                console.log(fps)
+                //console.log(fps)
             } 
         </script>
     </body>

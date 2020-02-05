@@ -41,25 +41,39 @@ function sendInput(){
             keyDowns
         }
         socket.emit('clientInput', command)
-
-        if(keyDowns['w'] == true){
-            state.myself.y -= velocity
-            localRenderScreen()
-        }
-        if(keyDowns['s'] == true){
-            state.myself.y += velocity
-            localRenderScreen()
-        }
-        if(keyDowns['d'] == true){
-            state.myself.x += velocity
-            localRenderScreen()
-        }
-        if(keyDowns['a'] == true){
-            state.myself.x -= velocity
-            localRenderScreen()
-        }
-        console.log(keyDowns)
     }
 }
-setInterval(sendInput,50)
+function handleInput(){
+    var timer = 50
+    if(state.myself.moveTimer == 0){
+
+        if(Object.entries(keyDowns).length !== 0){
+            if(keyDowns['w'] == true){
+                state.myself.y -= velocity
+                state.myself.moveTimer = timer
+                localRenderScreen()
+            }
+            if(keyDowns['s'] == true){
+                state.myself.y += velocity
+                state.myself.moveTimer = timer
+                localRenderScreen()
+            }
+            if(keyDowns['d'] == true){
+                state.myself.x += velocity
+                state.myself.moveTimer = timer
+                localRenderScreen()
+            }
+            if(keyDowns['a'] == true){
+                state.myself.x -= velocity
+                state.myself.moveTimer = timer
+                localRenderScreen()
+            }
+        }
+    }
+    if(state.myself.moveTimer > 0){
+        state.myself.moveTimer -= 10
+    }
+}
+setInterval(handleInput,10)
+setInterval(sendInput,100)
 

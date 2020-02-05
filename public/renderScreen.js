@@ -9,7 +9,6 @@ const ViewY = 18
 function localRenderScreen(){
     context.clearRect(0, 0, canvas.width, canvas.height); 
     const myself = state.myself
-    console.log('myself renderscreen:',myself)
     const playerView = state.aroundPlayer
     for(var i = 0; i < playerView.length; i++){
         var p = playerView[i]
