@@ -647,10 +647,68 @@ function randomSinal(number){
 
 
 
+function random(max){
+  return Math.floor( Math.random()*max)
+}
+function randomMinus(number){
+  if(Math.floor(Math.random()*10) <= 5){
+      return Math.floor( Math.random()*number)
+  }else{
+      return Math.floor( Math.random()*number*-1)
+  }
+}
+function randomSinal(number){
+  if(Math.floor(Math.random()) == 0){
+      return number
+  }else{
+      return number*-1
+  }
+}
+
+var GRID = 20
+function createRoom(startx,starty,roomtype){
+  if(roomtype == 0){
+
+    var roomWidthMedia = random(12)+7
+    var roomHeightMedia = random(12)+7
+    var roomQuads = random(4)+1
+    for(var i = 0; i < roomQuads; i++){
+        var randomCenterX = randomMinus(roomWidthMedia*3) //TPDP AQO
+        var randomCenterY = randomMinus(roomHeightMedia*3)
+        for(var w = -roomWidthMedia; w < roomWidthMedia; w++){
+            for(var h = -roomHeightMedia; h < roomHeightMedia; h++){
+                
+                try{
+                    // if(i != 0){
+                    //     var X = startx+(-w*GRID)+randomSinal(randomCenterX+3)*GRID
+                    //     var Y = starty+(-h*GRID)+randomSinal(randomCenterY+3)*GRID
+                    //     if(h >= roomHeightMedia-4 && ){
+                    //       insertObject(X,Y,{type: 'wall'})
+                    //       console.log("wall!")
+                    //     }else{
+                    //       insertObject(X,Y,{type: 'floor'})
+                    //     }
+                    // }else{
+                    var X = startx+(-w*GRID)
+                    var Y = starty+(-h*GRID)
+                    if(h >= roomHeightMedia-4){
+                      console.log("wall!")
+                      insertObject(X,Y,{type: 'wall'})
+                    }else{
+                      insertObject(X,Y,{type: 'floor'})
+                    }
+                      
+                    
+                }catch(e){
+                    
+                }
+            }
+        }
+      }
 
 
-
-
+  }
+}
 
 
 
@@ -668,13 +726,7 @@ function start(width,height,roomCount){
     let boundary = new Rectangle(width / 2, height / 2, width / 2, height / 2);
     dungeon.qtree = QuadTree.create(boundary);
 
-    insertObject(500,520,{type: 'floor'})
-    insertObject(500,480,{type: 'floor'})
-    insertObject(480,480,{type: 'floor'})
-    insertObject(460,460,{type: 'floor'})
-    insertObject(460,480,{type: 'floor'})
-    insertObject(520,520,{type: 'floor'})
-    insertObject(560,560,{type: 'floor'})
+    createRoom(500,500,0)
     // fillDungeon(width,height)
     // buildRooms(roomCount,width,height)
 

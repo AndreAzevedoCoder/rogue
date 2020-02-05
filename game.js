@@ -16,8 +16,8 @@ state = {
     players: {},
     dungeon: {},
 }
-const width = 1000;
-const height = 1000;
+const width = 10000;
+const height = 10000;
 const roomCount = 750
 function start(){
     state.dungeon = dungeonGenerator.start(width,height,roomCount);
@@ -47,7 +47,7 @@ function renderScreen(playerID){
     player = state.players[playerID]
     playerX = player.x
     playerY = player.y
-    let range = new dungeonGenerator.Rectangle(playerX, playerY, 350, 200);
+    let range = new dungeonGenerator.Rectangle(playerX, playerY, 700, 700);
     let playerView = state.dungeon.qtree.query(range);
     notifyAll({
         type: 'renderScreen',
@@ -70,6 +70,7 @@ function handleClientInput(input){
         penultUpdateInput = input
     }else if(lastUpdateInput == null){
         lastUpdateInput = input
+        console.log('latency:',lastUpdateInput.startTime-penultUpdateInput.startTime)
 
         if(input.keyDowns['w'] == true){
             state.players[input.playerID].y -= velocity

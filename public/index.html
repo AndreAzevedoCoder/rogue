@@ -13,11 +13,11 @@
         </style>
     </head>
     <body>
-        <canvas id="canvas"  width="640" height="360" style="width:1280px;height:720px;"  ></canvas>
+        <canvas id="canvas"  width="1280" height="720" style="width:1280px;height:720px;"  ></canvas>
         <script src="/socket.io/socket.io.js"></script>
+        <script src="loadImages.js"></script>
         <script src="quadtree.js"></script>
         <script src="keyboardListener.js"></script>
-        <script src="loadImages.js"></script>
         <script src="renderScreen.js"></script>
         
         <script>
@@ -48,8 +48,26 @@
                 state.aroundPlayer = command.aroundPlayer
 
                 localRenderScreen()
+                requestAnimFrame()
 
             })
+
+            var lastCalledTime;
+            var fps;
+            function requestAnimFrame() {
+
+
+                if(!lastCalledTime) {
+                    lastCalledTime = Date.now();
+                    fps = 0;
+                    return;
+                }
+                delta = (Date.now() - lastCalledTime)/1000;
+                lastCalledTime = Date.now();
+                fps = 1/delta;
+                 
+                console.log(fps)
+            } 
         </script>
     </body>
 </html>
