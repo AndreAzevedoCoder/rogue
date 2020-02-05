@@ -15,14 +15,15 @@
     <body>
         <canvas id="canvas"  width="1280" height="720" style="width:1280px;height:720px;"  ></canvas>
         <script src="/socket.io/socket.io.js"></script>
+        <script src="keyboardListener.js"></script>
         <script src="loadImages.js"></script>
         <script src="quadtree.js"></script>
-        <script src="keyboardListener.js"></script>
         <script src="renderScreen.js"></script>
         
         <script>
             var socket = io();
-    
+
+
             state = {
                 myself: {},
                 aroundPlayer: {},
@@ -45,9 +46,29 @@
 
 
             socket.on('renderScreen', (command) => {
-                const myself = command.myself
+                console.log(sentInputs)
+                for(var i = 0; i < Object.keys(sentInputs).length; i++){
+                    if(command.key == Object.keys(sentInputs).length-1){
+                        state.myself.x = command.playerX
+                        state.myself.y = command.playerY
+                        console.log("ultimos")
+                    }
+                    delete sentInputs[i]
+                }
+                // if(sentInputs.hasOwnProperty(command.key)){
+                //     delete sentInputs[command.key]
+                //     if(Object.keys(sentInputs).length == 1){
+                //         state.myself.x = command.playerX
+                //         state.myself.y = command.playerY
+                //         console.log("ultimos")
+                //     }
+                //     console.log(inputs)
+                // }
+
+
+
+
                 state.aroundPlayer = command.aroundPlayer
-                console.log("server mando")
                 localRenderScreen()
                 requestAnimFrame()
 

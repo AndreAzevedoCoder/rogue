@@ -647,23 +647,7 @@ function randomSinal(number){
 
 
 
-function random(max){
-  return Math.floor( Math.random()*max)
-}
-function randomMinus(number){
-  if(Math.floor(Math.random()*10) <= 5){
-      return Math.floor( Math.random()*number)
-  }else{
-      return Math.floor( Math.random()*number*-1)
-  }
-}
-function randomSinal(number){
-  if(Math.floor(Math.random()) == 0){
-      return number
-  }else{
-      return number*-1
-  }
-}
+
 
 var GRID = 20
 function createRoom(startx,starty,roomtype){

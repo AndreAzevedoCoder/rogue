@@ -1,4 +1,5 @@
 const dungeonGenerator = require('./dungeonGenerator');
+const quadtree = require('./qtree')
 
 const observers = []
 function subscribe(observerFunction) {
@@ -24,14 +25,22 @@ function start(){
 
 }
 
-
+function insertObject(x,y,data){
+    let p = new quadtree.Point(x, y,data);
+    state.dungeon.qtree.insert(p);
+}
 function addPlayer(playerID){
     //var spawnRoom = state.dungeon.rooms[Math.floor( Math.random()*roomCount)]
     playerX = 500//spawnRoom.x
     playerY = 500//spawnRoom.y
+
+    let p = new quadtree.Point(playerX,playerY,{type: 'player',playerID: playerID});
+    state.dungeon.qtree.insert(p);
+
     state.players[playerID] = ({
         x: playerX,
         y: playerY,
+        p: p,
         moveTimer: 0,
     })
     notifyAll({
@@ -40,19 +49,26 @@ function addPlayer(playerID){
         player: playerID,
         myself: state.players[playerID]
     })
-    renderScreen(playerID)
+    renderScreen(playerID,0)
 }
 
-function renderScreen(playerID){
+function renderScreen(playerID,inputKey){
     player = state.players[playerID]
     playerX = player.x
     playerY = player.y
+
+    player.p.x = playerX
+    player.p.y = playerY
     let range = new dungeonGenerator.Rectangle(playerX, playerY, 1280, 720);
     let playerView = state.dungeon.qtree.query(range);
+    
     notifyAll({
         type: 'renderScreen',
         sendTo: 'player',
         player: playerID,
+        playerX: playerX,
+        playerY: playerY,
+        key: inputKey,
         moveTimer: 0,
         aroundPlayer: playerView,
     })
@@ -65,41 +81,40 @@ function removePlayer(playerID){
 var lastUpdateInput = null;
 var penultUpdateInput = null;
 function handleClientInput(input){
-    const velocity = 14
-    const timer = 50
+    const velocity = 7
+    const timer = 20
     if(penultUpdateInput == null){
         penultUpdateInput = input
     }else if(lastUpdateInput == null){
         lastUpdateInput = input
         if(state.players[input.playerID] !== undefined){
-            console.log(state.players[input.playerID].moveTimer)
             if(state.players[input.playerID].moveTimer == 0){
-                console.log(state.players[input.playerID].moveTimer)
-                console.log('latency:',lastUpdateInput.startTime-penultUpdateInput.startTime)
+                var latency = lastUpdateInput.startTime-penultUpdateInput.startTime
+                console.log("latency: "+latency)
                 if(input.keyDowns['w'] == true){
-                    state.players[input.playerID].y -= velocity *10
                     state.players[input.playerID].moveTimer = timer
+                    state.players[input.playerID].y -= velocity
                     console.log(state.players[input.playerID].moveTimer)
-                    renderScreen(input.playerID)
-            console.log(state.players[input.playerID].x,state.players[input.playerID].y)
+                    renderScreen(input.playerID,penultUpdateInput.key)
+                    console.log(state.players[input.playerID].x,state.players[input.playerID].y)
                 }
                 if(input.keyDowns['s'] == true){
-                    state.players[input.playerID].y += velocity * 10
                     state.players[input.playerID].moveTimer = timer
-                    renderScreen(input.playerID)
-            console.log(state.players[input.playerID].x,state.players[input.playerID].y)
+                    state.players[input.playerID].y += velocity
+                    renderScreen(input.playerID,penultUpdateInput.key)
+                    console.log(state.players[input.playerID].x,state.players[input.playerID].y)
                 }
                 if(input.keyDowns['d'] == true){
-                    state.players[input.playerID].x += velocity
                     state.players[input.playerID].moveTimer = timer
-                    renderScreen(input.playerID)
-            console.log(state.players[input.playerID].x,state.players[input.playerID].y)
+                    state.players[input.playerID].x += velocity
+                    renderScreen(input.playerID,penultUpdateInput.key)
+                    console.log(state.players[input.playerID].x,state.players[input.playerID].y)
                 }
                 if(input.keyDowns['a'] == true){
                     state.players[input.playerID].x -= velocity
                     state.players[input.playerID].moveTimer = timer
-                    renderScreen(input.playerID)
-            console.log(state.players[input.playerID].x,state.players[input.playerID].y)
+                    renderScreen(input.playerID,penultUpdateInput.key)
+                    console.log(state.players[input.playerID].x,state.players[input.playerID].y)
                 }
             }
     
@@ -121,7 +136,7 @@ function minusMoveTimer(){
     });
 }
 
-setInterval(processWorldStatus,100)
+setInterval(processWorldStatus,20)
 setInterval(minusMoveTimer,10)
 
 

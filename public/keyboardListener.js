@@ -12,8 +12,20 @@ function notifyAll(command) {
         observerFunction(command)
     }
 }
+function makeid(length) {
+    var result           = '';
+    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for ( var i = 0; i < length; i++ ) {
+       result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+ }
+ 
+
 
 var keyDowns = {};  
+var sentInputs = {};
 document.addEventListener('keypress', handleKeydown)
 
 function handleKeydown(event) {
@@ -27,43 +39,47 @@ function handleKeydown(event) {
 document.addEventListener('keyup',function(e){
     const key = e.key
     delete keyDowns[key]
-    
 },true);
-
 const timeMove = 0;
-const velocity = 14
+const velocity = 7
 function sendInput(){
     if(Object.entries(keyDowns).length !== 0){
         const command = {
             type: 'move-player',
             playerID: state.myself.playerID,
+            key: makeid(14),
             startTime: Date.now(),
             keyDowns
         }
+        sentInputs[Object.keys(sentInputs).length] = command
         socket.emit('clientInput', command)
     }
 }
 function handleInput(){
-    var timer = 50
+    var timer = 20
     if(state.myself.moveTimer == 0){
 
         if(Object.entries(keyDowns).length !== 0){
             if(keyDowns['w'] == true){
+                sendInput()
                 state.myself.y -= velocity
                 state.myself.moveTimer = timer
                 localRenderScreen()
             }
             if(keyDowns['s'] == true){
+                sendInput()
                 state.myself.y += velocity
                 state.myself.moveTimer = timer
                 localRenderScreen()
             }
             if(keyDowns['d'] == true){
+                sendInput()
                 state.myself.x += velocity
                 state.myself.moveTimer = timer
                 localRenderScreen()
             }
             if(keyDowns['a'] == true){
+                sendInput()
                 state.myself.x -= velocity
                 state.myself.moveTimer = timer
                 localRenderScreen()
@@ -75,5 +91,5 @@ function handleInput(){
     }
 }
 setInterval(handleInput,10)
-setInterval(sendInput,100)
+//setInterval(sendInput,100)
 
