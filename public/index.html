@@ -54,6 +54,27 @@
                     penultUpdateInput = command
                 }else if(lastUpdateInput == null){
                     lastUpdateInput = command
+
+                    var differenceX = state.myself.x - penultUpdateInput.playerX
+                    var differenceY = state.myself.y - penultUpdateInput.playerY
+                    console.log("diferenca:",differenceX,differenceY)
+                    console.log()
+
+                    var deltaX = lastUpdateInput.playerX-penultUpdateInput.playerX
+                    var deltaY = lastUpdateInput.playerY-penultUpdateInput.playerY
+                    console.log("deltax: ",deltaX,deltaY)
+
+
+
+                    state.myself.x = penultUpdateInput.playerX
+                    state.myself.y = penultUpdateInput.playerY
+                    state.aroundPlayer = penultUpdateInput.aroundPlayer
+                    localRenderScreen()
+                    
+
+
+                    penultUpdateInput = null
+                    lastUpdateInput = null
                 }
 
                 // for(var i = 0; i < Object.keys(sentInputs).length; i++){
@@ -64,12 +85,6 @@
                 // }
                 // sentInputs[Object.keys(sentInputs).length]
 
-
-
-                state.aroundPlayer = command.aroundPlayer
-                localRenderScreen()
-                requestAnimFrame()
-
             })
             function applyChanges(){
                 if(lastUpdateInput != null){
@@ -78,31 +93,7 @@
                     penultUpdateInput = null;
                 }
             }
-            function smoothMoviment(startx,starty,endx,endy){
-                var deltaX = (endx-startx)/40
-                var deltaY = (endy-starty)/40
-                for(var i = 0; i < 4; i++){
-                    state.myself.x = i*deltaX+state.myself.x
-                }
-            }
-            setInterval(applyChanges,200)
 
-            var lastCalledTime;
-            var fps;
-            function requestAnimFrame() {
-
-
-                if(!lastCalledTime) {
-                    lastCalledTime = Date.now();
-                    fps = 0;
-                    return;
-                }
-                delta = (Date.now() - lastCalledTime)/1000;
-                lastCalledTime = Date.now();
-                fps = 1/delta;
-                 
-                //console.log(fps)
-            } 
         </script>
     </body>
 </html>
