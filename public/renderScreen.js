@@ -26,7 +26,6 @@ function localRenderScreen(){
         if(p.userData.type == 'player' ){
             var X = canvas.width/2+(p.x-myself.x)
             var Y = canvas.height/2+(p.y-myself.y)
-            console.log("player")
             if(p.userData.playerID != state.myself.playerID){
                 context.drawImage(playeridleside,X,Y,14,19)
             }

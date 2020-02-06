@@ -41,7 +41,7 @@ document.addEventListener('keyup',function(e){
     delete keyDowns[key]
 },true);
 const timeMove = 0;
-const velocity = 7
+const velocity = 12
 function sendInput(){
     if(Object.entries(keyDowns).length !== 0){
         const command = {
@@ -56,8 +56,9 @@ function sendInput(){
     }
 }
 function handleInput(){
-    var timer = 20
+    var timer = 40
     if(state.myself.moveTimer == 0){
+        console.log(state.myself.x,state.myself.y)
 
         if(Object.entries(keyDowns).length !== 0){
             if(keyDowns['w'] == true){
@@ -87,9 +88,9 @@ function handleInput(){
         }
     }
     if(state.myself.moveTimer > 0){
-        state.myself.moveTimer -= 10
+        state.myself.moveTimer -= 20
     }
 }
-setInterval(handleInput,10)
+setInterval(handleInput,20)
 //setInterval(sendInput,100)
 

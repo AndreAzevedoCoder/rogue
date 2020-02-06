@@ -78,49 +78,40 @@ function removePlayer(playerID){
     delete state.players[playerID]
 }
 
-var lastUpdateInput = null;
-var penultUpdateInput = null;
+
 function handleClientInput(input){
-    const velocity = 7
-    const timer = 20
-    if(penultUpdateInput == null){
-        penultUpdateInput = input
-    }else if(lastUpdateInput == null){
-        lastUpdateInput = input
-        if(state.players[input.playerID] !== undefined){
-            if(state.players[input.playerID].moveTimer == 0){
-                var latency = lastUpdateInput.startTime-penultUpdateInput.startTime
-                console.log("latency: "+latency)
-                if(input.keyDowns['w'] == true){
-                    state.players[input.playerID].moveTimer = timer
-                    state.players[input.playerID].y -= velocity
-                    console.log(state.players[input.playerID].moveTimer)
-                    renderScreen(input.playerID,penultUpdateInput.key)
-                    console.log(state.players[input.playerID].x,state.players[input.playerID].y)
-                }
-                if(input.keyDowns['s'] == true){
-                    state.players[input.playerID].moveTimer = timer
-                    state.players[input.playerID].y += velocity
-                    renderScreen(input.playerID,penultUpdateInput.key)
-                    console.log(state.players[input.playerID].x,state.players[input.playerID].y)
-                }
-                if(input.keyDowns['d'] == true){
-                    state.players[input.playerID].moveTimer = timer
-                    state.players[input.playerID].x += velocity
-                    renderScreen(input.playerID,penultUpdateInput.key)
-                    console.log(state.players[input.playerID].x,state.players[input.playerID].y)
-                }
-                if(input.keyDowns['a'] == true){
-                    state.players[input.playerID].x -= velocity
-                    state.players[input.playerID].moveTimer = timer
-                    renderScreen(input.playerID,penultUpdateInput.key)
-                    console.log(state.players[input.playerID].x,state.players[input.playerID].y)
-                }
+    const velocity = 3
+    const timer = 40
+
+    if(state.players[input.playerID] !== undefined){
+        if(state.players[input.playerID].moveTimer == 0){
+            //var latency = lastUpdateInput.startTime-penultUpdateInput.startTime
+            //console.log("latency: "+latency)
+            if(input.keyDowns['w'] == true){
+                state.players[input.playerID].moveTimer = timer
+                state.players[input.playerID].y -= velocity
+                console.log(state.players[input.playerID].moveTimer)
+                renderScreen(input.playerID,input.key)
+                console.log(state.players[input.playerID].x,state.players[input.playerID].y)
             }
-    
-            
-            lastUpdateInput = null;
-            penultUpdateInput = null;
+            if(input.keyDowns['s'] == true){
+                state.players[input.playerID].moveTimer = timer
+                state.players[input.playerID].y += velocity
+                renderScreen(input.playerID,input.key)
+                console.log(state.players[input.playerID].x,state.players[input.playerID].y)
+            }
+            if(input.keyDowns['d'] == true){
+                state.players[input.playerID].moveTimer = timer
+                state.players[input.playerID].x += velocity
+                renderScreen(input.playerID,input.key)
+                console.log(state.players[input.playerID].x,state.players[input.playerID].y)
+            }
+            if(input.keyDowns['a'] == true){
+                state.players[input.playerID].x -= velocity
+                state.players[input.playerID].moveTimer = timer
+                renderScreen(input.playerID,input.key)
+                console.log(state.players[input.playerID].x,state.players[input.playerID].y)
+            }
         }
     }
 }
@@ -136,7 +127,7 @@ function minusMoveTimer(){
     });
 }
 
-setInterval(processWorldStatus,20)
+setInterval(processWorldStatus,100)
 setInterval(minusMoveTimer,10)
 
 

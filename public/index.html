@@ -44,27 +44,25 @@
                 localRenderScreen()
             })
 
-
+            var lastUpdateInput = null;
+            var penultUpdateInput = null;
             socket.on('renderScreen', (command) => {
-                console.log(sentInputs)
-                for(var i = 0; i < Object.keys(sentInputs).length; i++){
-                    if(command.key == Object.keys(sentInputs).length-1){
-                        state.myself.x = command.playerX
-                        state.myself.y = command.playerY
-                        console.log("ultimos")
-                    }
-                    delete sentInputs[i]
+
+                console.log(penultUpdateInput,lastUpdateInput)
+
+                if(penultUpdateInput == null){
+                    penultUpdateInput = command
+                }else if(lastUpdateInput == null){
+                    lastUpdateInput = command
                 }
-                // if(sentInputs.hasOwnProperty(command.key)){
-                //     delete sentInputs[command.key]
-                //     if(Object.keys(sentInputs).length == 1){
-                //         state.myself.x = command.playerX
-                //         state.myself.y = command.playerY
+
+                // for(var i = 0; i < Object.keys(sentInputs).length; i++){
+                //     if(command.key == Object.keys(sentInputs).length-1){
                 //         console.log("ultimos")
                 //     }
-                //     console.log(inputs)
+                //     delete sentInputs[i]
                 // }
-
+                // sentInputs[Object.keys(sentInputs).length]
 
 
 
@@ -73,6 +71,21 @@
                 requestAnimFrame()
 
             })
+            function applyChanges(){
+                if(lastUpdateInput != null){
+                    smoothMoviment(state.myself.x,state.myself.y,penultUpdateInput.playerX,penultUpdateInput.playerY)
+                    lastUpdateInput = null;
+                    penultUpdateInput = null;
+                }
+            }
+            function smoothMoviment(startx,starty,endx,endy){
+                var deltaX = (endx-startx)/40
+                var deltaY = (endy-starty)/40
+                for(var i = 0; i < 4; i++){
+                    state.myself.x = i*deltaX+state.myself.x
+                }
+            }
+            setInterval(applyChanges,200)
 
             var lastCalledTime;
             var fps;
