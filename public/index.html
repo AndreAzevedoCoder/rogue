@@ -44,55 +44,29 @@
                 localRenderScreen()
             })
 
-            var lastUpdateInput = null;
-            var penultUpdateInput = null;
+            var latestUpdates = {}
+
             socket.on('renderScreen', (command) => {
 
-                console.log(penultUpdateInput,lastUpdateInput)
-
-                if(penultUpdateInput == null){
-                    penultUpdateInput = command
-                }else if(lastUpdateInput == null){
-                    lastUpdateInput = command
-
-                    var differenceX = state.myself.x - penultUpdateInput.playerX
-                    var differenceY = state.myself.y - penultUpdateInput.playerY
-                    console.log("diferenca:",differenceX,differenceY)
-                    console.log()
-
-                    var deltaX = lastUpdateInput.playerX-penultUpdateInput.playerX
-                    var deltaY = lastUpdateInput.playerY-penultUpdateInput.playerY
-                    console.log("deltax: ",deltaX,deltaY)
-
-
-
-                    state.myself.x = penultUpdateInput.playerX
-                    state.myself.y = penultUpdateInput.playerY
-                    state.aroundPlayer = penultUpdateInput.aroundPlayer
-                    localRenderScreen()
-                    
-
-
-                    penultUpdateInput = null
-                    lastUpdateInput = null
-                }
-
-                // for(var i = 0; i < Object.keys(sentInputs).length; i++){
-                //     if(command.key == Object.keys(sentInputs).length-1){
-                //         console.log("ultimos")
-                //     }
-                //     delete sentInputs[i]
-                // }
-                // sentInputs[Object.keys(sentInputs).length]
-
+                latestUpdates[Object.keys(latestUpdates).length] = command
+                console.log("oi")
             })
-            function applyChanges(){
-                if(lastUpdateInput != null){
-                    smoothMoviment(state.myself.x,state.myself.y,penultUpdateInput.playerX,penultUpdateInput.playerY)
-                    lastUpdateInput = null;
-                    penultUpdateInput = null;
+
+            function applyUpdates(){
+                if(Object.keys(latestUpdates).length > 0){
+                    let update = latestUpdates[0]
+                    if(update != null){                        
+                        state.aroundPlayer = update.aroundPlayer
+                        for(var i = 0; i < 11; i++){
+                            state.myself.x = update.playerX/10 * i
+                            state.myself.y = update.playerY/10 * i
+                            localRenderScreen()
+                        }
+                        delete latestUpdates[0]
+                    }
                 }
             }
+            setInterval(applyUpdates,50)
 
         </script>
     </body>

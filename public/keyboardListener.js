@@ -63,25 +63,25 @@ function handleInput(){
         if(Object.entries(keyDowns).length !== 0){
             if(keyDowns['w'] == true){
                 sendInput()
-                state.myself.y -= velocity
+                //state.myself.y -= velocity
                 state.myself.moveTimer = timer
                 localRenderScreen()
             }
             if(keyDowns['s'] == true){
                 sendInput()
-                state.myself.y += velocity
+                //state.myself.y += velocity
                 state.myself.moveTimer = timer
                 localRenderScreen()
             }
             if(keyDowns['d'] == true){
                 sendInput()
-                state.myself.x += velocity
+                //state.myself.x += velocity
                 state.myself.moveTimer = timer
                 localRenderScreen()
             }
             if(keyDowns['a'] == true){
                 sendInput()
-                state.myself.x -= velocity
+                //state.myself.x -= velocity
                 state.myself.moveTimer = timer
                 localRenderScreen()
             }

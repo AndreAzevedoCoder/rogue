@@ -52,7 +52,7 @@ function addPlayer(playerID){
     renderScreen(playerID,0)
 }
 
-function renderScreen(playerID,inputKey){
+function renderScreen(playerID){
     player = state.players[playerID]
     playerX = player.x
     playerY = player.y
@@ -68,7 +68,6 @@ function renderScreen(playerID,inputKey){
         player: playerID,
         playerX: playerX,
         playerY: playerY,
-        key: inputKey,
         moveTimer: 0,
         aroundPlayer: playerView,
     })
@@ -80,43 +79,43 @@ function removePlayer(playerID){
 
 
 function handleClientInput(input){
-    const velocity = 12
-    const timer = 40
+    const velocity = 8
+    const timer = 20
 
     if(state.players[input.playerID] !== undefined){
         if(state.players[input.playerID].moveTimer == 0){
-            //var latency = lastUpdateInput.startTime-penultUpdateInput.startTime
-            //console.log("latency: "+latency)
             if(input.keyDowns['w'] == true){
                 state.players[input.playerID].moveTimer = timer
                 state.players[input.playerID].y -= velocity
-                console.log(state.players[input.playerID].moveTimer)
-                renderScreen(input.playerID,input.key)
+                
                 console.log(state.players[input.playerID].x,state.players[input.playerID].y)
             }
             if(input.keyDowns['s'] == true){
                 state.players[input.playerID].moveTimer = timer
                 state.players[input.playerID].y += velocity
-                renderScreen(input.playerID,input.key)
+
                 console.log(state.players[input.playerID].x,state.players[input.playerID].y)
             }
             if(input.keyDowns['d'] == true){
                 state.players[input.playerID].moveTimer = timer
                 state.players[input.playerID].x += velocity
-                renderScreen(input.playerID,input.key)
+
                 console.log(state.players[input.playerID].x,state.players[input.playerID].y)
             }
             if(input.keyDowns['a'] == true){
                 state.players[input.playerID].x -= velocity
                 state.players[input.playerID].moveTimer = timer
-                renderScreen(input.playerID,input.key)
+                
                 console.log(state.players[input.playerID].x,state.players[input.playerID].y)
             }
         }
     }
 }
 function processWorldStatus(){
-
+    var players = Object.getOwnPropertyNames(state.players)
+    players.forEach(player => {
+        renderScreen(player)
+    })
 }
 function minusMoveTimer(){
     var players = Object.getOwnPropertyNames(state.players)
