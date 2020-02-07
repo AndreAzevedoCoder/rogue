@@ -79,7 +79,7 @@ function removePlayer(playerID){
 
 
 function handleClientInput(input){
-    const velocity = 15
+    const velocity = 20
     const timer = 20
 
     if(state.players[input.playerID] !== undefined){

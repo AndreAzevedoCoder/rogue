@@ -26,6 +26,15 @@ function makeid(length) {
 
 var keyDowns = {};  
 var sentInputs = {};
+document.onmousemove = function(ve){
+    let cX = -canvas.width / 2;
+    let cY = -canvas.height / 2;
+    let x = ve.offsetX;
+    let y = ve.offsetY;
+    var rX = cX + x - 8;
+    var rY = cY + y - 8;
+    state.myself.angle = Math.atan2(rX, rY) / Math.PI * 180;
+}
 document.addEventListener('keypress', handleKeydown)
 
 function handleKeydown(event) {
