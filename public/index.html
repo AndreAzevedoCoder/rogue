@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="Content-Language" content="pt-br">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <title>Document</title>
         <style>
@@ -47,12 +48,13 @@
             var latestUpdates = {}
 
             socket.on('renderScreen', (command) => {
-
                 latestUpdates[Object.keys(latestUpdates).length] = command
-                console.log("oi")
+                console.log(latestUpdates)
+                applyUpdates()
             })
 
             function applyUpdates(){
+                sendInput()
                 if(Object.keys(latestUpdates).length > 0){
                     let update = latestUpdates[0]
                     if(update != null){                        
@@ -62,11 +64,12 @@
                             state.myself.y = update.playerY/10 * i
                             localRenderScreen()
                         }
+                        console.log("oi")
                         delete latestUpdates[0]
                     }
                 }
             }
-            setInterval(applyUpdates,50)
+           // setInterval(applyUpdates,100)
 
         </script>
     </body>
