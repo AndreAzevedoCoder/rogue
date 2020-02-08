@@ -649,12 +649,12 @@ function randomSinal(number){
 
 
 
-var GRID = 20
+var GRID = 40
 function createRoom(startx,starty,roomtype){
   if(roomtype == 0){
 
-    var roomWidthMedia = random(12)+7
-    var roomHeightMedia = random(12)+7
+    var roomWidthMedia = random(7)+4
+    var roomHeightMedia = random(7)+4
     var roomQuads = random(4)+1
     for(var i = 0; i < roomQuads; i++){
         var randomCenterX = randomMinus(roomWidthMedia*3) //TPDP AQO
@@ -675,11 +675,15 @@ function createRoom(startx,starty,roomtype){
                     // }else{
                     var X = startx+(-w*GRID)
                     var Y = starty+(-h*GRID)
-                    if(h >= roomHeightMedia-4){
-                
-                      insertObject(X,Y,{type: 'wall', solid: true})
+                    if(h >= roomHeightMedia-2){
+                      if(h == roomHeightMedia-1){
+                        insertObject(X,Y,{type: 'topwall', solid: true})
+                      }
+                      if(h == roomHeightMedia-2){
+                        insertObject(X,Y,{type: 'middlewall', solid: true})
+                      }
                     }else{
-                      insertObject(X,Y,{type: 'floor'})
+                      insertObject(X,Y,{type: 'floor', random: random(5)})
                     }
                       
                     

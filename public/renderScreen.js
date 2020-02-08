@@ -1,11 +1,14 @@
 const canvas = document.getElementById('canvas')
 const context = canvas.getContext('2d')
-const GRID = 20
-canvas.width = 1280;
-canvas.height = 720;
+const GRID = 40
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+
 const ViewX = 32
 const ViewY = 18
-
+context.fillStyle = "black";
+context.fillRect(0, 0, canvas.width, canvas.height);
 function drawImage(img, x, y, width, height, deg, flip, flop, center,centerX,centerY) {
 
     context.save();
@@ -47,11 +50,36 @@ function localRenderScreen(){
         var p = playerView[i]
         var X = canvas.width/2+(p.x-myself.x)
         var Y = canvas.height/2+(p.y-myself.y)
+
+
+
         if(p.userData.type == 'floor' ){
-            context.drawImage(floor,X,Y,GRID,GRID)
+            if(p.userData.random == 0 ){
+                context.drawImage(floor0,X,Y,GRID,GRID)
+            }
+            if(p.userData.random == 1 ){
+                context.drawImage(floor1,X,Y,GRID,GRID)
+            }
+            if(p.userData.random == 2 ){
+                context.drawImage(floor2,X,Y,GRID,GRID)
+            }
+            if(p.userData.random == 3 ){
+                context.drawImage(floor3,X,Y,GRID,GRID)
+            }
+            if(p.userData.random == 4 ){
+                context.drawImage(floor4,X,Y,GRID,GRID)
+            }
         }
-        if(p.userData.type == 'wall' ){
-            context.drawImage(hall2,X,Y,GRID,GRID)
+
+
+        if(p.userData.type == 'topwall' ){
+            context.drawImage(topwall0,X,Y,GRID,GRID)
+        } 
+        if(p.userData.type == 'middlewall' ){
+            context.drawImage(middlewall0,X,Y,GRID,GRID)
+        } 
+        if(p.userData.type == 'bottomwall' ){
+            drawImage(bottomwall0,X,Y,GRID,GRID,0,false,true)
         } 
     }
     for(var i = 0; i < playerView.length; i++){
@@ -61,27 +89,27 @@ function localRenderScreen(){
             var Y = canvas.height/2+(p.y-myself.y)
             if(p.userData.playerID != state.myself.playerID){
                 if(p.userData.angle > 0){
-                    drawImage(revolver,X+10,Y+2,10,14,p.userData.angle,true,true,true,-7,-8)
-                    drawImage(playeridleside,X,Y,14,19,0)
+                    drawImage(revolver,X+10,Y+2,20,28,p.userData.angle,true,true,true,-24,-19)
+                    drawImage(playeridleside,X,Y,28,38,0)
                 }else{
-                    drawImage(revolver,X+10,Y+2,10,14,p.userData.angle,false,true,true,12,-8)
-                    drawImage(playeridleside,X,Y,14,19,0,true)
+                    drawImage(revolver,X+10,Y+2,20,28,p.userData.angle,false,true,true,20,-16)
+                    drawImage(playeridleside,X,Y,28,38,0,true)
                 }
             }
         } 
         if(p.userData.type == 'bullet' ){
             var X = canvas.width/2+(p.x-myself.x)
             var Y = canvas.height/2+(p.y-myself.y)
-            context.drawImage(bullet0,X,Y,7,7)
+            context.drawImage(bullet0,X,Y,14,14)
         } 
     }
     
     if(state.myself.angle > 0){
-        drawImage(revolver,canvas.width/2+10,canvas.height/2+2,10,14,state.myself.angle,true,true,true,-7,-8)
-        drawImage(playeridleside,canvas.width/2,canvas.height/2,14,19,0)
+        drawImage(revolver,canvas.width/2+10,canvas.height/2+2,20,28,state.myself.angle,true,true,true,-24,-19)
+        drawImage(playeridleside,canvas.width/2,canvas.height/2,28,38,0)
     }else{
-        drawImage(revolver,canvas.width/2+10,canvas.height/2+2,10,14,state.myself.angle,false,true,true,12,-8)
-        drawImage(playeridleside,canvas.width/2,canvas.height/2,14,19,0,true)
+        drawImage(revolver,canvas.width/2+10,canvas.height/2+2,20,28,state.myself.angle,false,true,true,20,-19)
+        drawImage(playeridleside,canvas.width/2,canvas.height/2,28,38,0,true)
     }
     // context.fillStyle = 'yellow'
     // context.fillRect((canvas.width/GRID * 0.5)*GRID,(canvas.height/GRID * 0.5)*GRID,GRID,GRID)

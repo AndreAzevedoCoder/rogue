@@ -81,7 +81,7 @@ function removePlayer(playerID){
 
 
 function handleClientInput(input){
-    const velocity = 20
+    const velocity = 35
     const timer = 20
 
     if(state.players[input.playerID] !== undefined){
@@ -117,13 +117,22 @@ function shoot(player){
     if(player.x !== NaN){
         const angle = Math.floor(player.angle)
         state.players[player.playerID].angle = angle
-        var velocity = 45;
-        let bullet = new quadtree.Point(player.x,player.y,{type: 'bullet',playerID: player.playerID,angle: angle,velocity: velocity});
-        state.bullets[Object.keys(state.bullets).length] = bullet
-        state.dungeon.qtree.insert(bullet);
+        var velocity = 70;
+        if(angle > 0){
+            let bullet = new quadtree.Point(player.x+20,player.y,{type: 'bullet',playerID: player.playerID,angle: angle,velocity: velocity});
+            state.bullets[Object.keys(state.bullets).length] = bullet
+            state.dungeon.qtree.insert(bullet);
+        }else{
+            let bullet = new quadtree.Point(player.x-24,player.y,{type: 'bullet',playerID: player.playerID,angle: angle,velocity: velocity});
+            state.bullets[Object.keys(state.bullets).length] = bullet
+            state.dungeon.qtree.insert(bullet);
+        }
     }
 }
 function processWorldStatus(){
+
+    //console.log(state.dungeon.qtree)
+
     var players = Object.getOwnPropertyNames(state.players)
     players.forEach(player => {
         renderScreen(player)
@@ -137,16 +146,11 @@ function processWorldStatus(){
         nextToBullet.forEach(next => {
             console.log(next)
             if(next.userData.solid == true){
-                bullet.stop = true
-                bullet.x = 100000
+                delete next.userData.solid
             }
             if(next.userData.type == 'player'){
                 if(next.userData.playerID !== bullet.userData.playerID){
-
                     delete bullet
-                    // bullet.stop = true
-                    // bullet.x = 100000
-
                 }
             }
         });
