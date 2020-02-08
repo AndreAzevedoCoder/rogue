@@ -16,13 +16,13 @@ function notifyAll(command) {
 state = {
     players: {},
     dungeon: {},
+    bullets: {}
 }
 const width = 100000;
 const height = 100000;
 const roomCount = 750
 function start(){
     state.dungeon = dungeonGenerator.start(width,height,roomCount);
-
 }
 
 function insertObject(x,y,data){
@@ -36,6 +36,7 @@ function addPlayer(playerID){
 
     let p = new quadtree.Point(playerX,playerY,{type: 'player',playerID: playerID});
     state.dungeon.qtree.insert(p);
+    console.log(p)
 
     state.players[playerID] = ({
         x: playerX,
@@ -59,6 +60,7 @@ function renderScreen(playerID){
 
     player.p.x = playerX
     player.p.y = playerY
+    player.p.userData.angle = player.angle
     let range = new dungeonGenerator.Rectangle(playerX, playerY, 1280, 720);
     let playerView = state.dungeon.qtree.query(range);
     
@@ -111,11 +113,31 @@ function handleClientInput(input){
         }
     }
 }
+function shoot(player){
+    if(player.x !== NaN){
+        const angle = Math.floor(player.angle)
+        state.players[player.playerID].angle = angle
+        var velocity = 45;
+        let bullet = new quadtree.Point(player.x,player.y,{type: 'bullet',playerID: player.playerID,angle: angle,velocity: velocity});
+        console.log(bullet)
+        state.bullets[Object.keys(state.bullets).length] = bullet
+        state.dungeon.qtree.insert(bullet);
+    }
+}
 function processWorldStatus(){
     var players = Object.getOwnPropertyNames(state.players)
     players.forEach(player => {
         renderScreen(player)
     })
+    for(var i = 0; i < Object.keys(state.bullets).length; i++){
+        var bullet = state.bullets[i]
+        var angle = bullet.userData.angle * Math.PI/180
+        var x = Math.cos(angle);
+        var y = Math.sin(angle);
+        bullet.x += y * bullet.userData.velocity
+        bullet.y += x * bullet.userData.velocity
+    }
+
 }
 function minusMoveTimer(){
     var players = Object.getOwnPropertyNames(state.players)
@@ -125,6 +147,7 @@ function minusMoveTimer(){
         }
     });
 }
+
 
 setInterval(processWorldStatus,100)
 setInterval(minusMoveTimer,10)
@@ -137,6 +160,7 @@ module.exports = {
     addPlayer,
     removePlayer,
     handleClientInput,
+    shoot,
     start
 }
 

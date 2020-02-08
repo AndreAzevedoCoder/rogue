@@ -1,3 +1,14 @@
+//TODO PLAYER
+var playeridleside = new Image();
+playeridleside.src = './images/player/playeridleside.png'
+
+//TODO GUN
+var revolver = new Image();
+revolver.src = './images/guns/revolver.png'
+
+//TODO BULLET
+var bullet0 = new Image();
+bullet0.src = './images/bullets/bullet0.png'
 
 //TODO FLOOR
 var floor = new Image();
@@ -28,16 +39,3 @@ hall4.src = './images/hall/hall4.png'
 
 
 
-//TODO PLAYER
-var playeridleside = new Image();
-playeridleside.src = './images/player/playeridleside.png'
-
-
-
-
-
-
-
-//TODO GUN
-var revolver = new Image();
-revolver.src = './images/guns/revolver.png'

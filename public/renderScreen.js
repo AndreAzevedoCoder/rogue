@@ -60,8 +60,19 @@ function localRenderScreen(){
             var X = canvas.width/2+(p.x-myself.x)
             var Y = canvas.height/2+(p.y-myself.y)
             if(p.userData.playerID != state.myself.playerID){
-                context.drawImage(playeridleside,X,Y,14,19)
+                if(p.userData.angle > 0){
+                    drawImage(revolver,X+10,Y+2,10,14,p.userData.angle,true,true,true,-7,-8)
+                    drawImage(playeridleside,X,Y,14,19,0)
+                }else{
+                    drawImage(revolver,X+10,Y+2,10,14,p.userData.angle,false,true,true,12,-8)
+                    drawImage(playeridleside,X,Y,14,19,0,true)
+                }
             }
+        } 
+        if(p.userData.type == 'bullet' ){
+            var X = canvas.width/2+(p.x-myself.x)
+            var Y = canvas.height/2+(p.y-myself.y)
+            context.drawImage(bullet0,X,Y,7,7)
         } 
     }
     

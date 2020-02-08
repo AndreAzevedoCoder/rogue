@@ -25,7 +25,11 @@ function makeid(length) {
 
 
 var keyDowns = {};  
-var sentInputs = {};
+
+document.onclick = function(ve){
+    socket.emit('playerClick',{playerID: state.myself.playerID,  x: state.myself.x,  y: state.myself.y,  angle: state.myself.angle})
+}
+
 document.onmousemove = function(ve){
     let cX = -canvas.width / 2;
     let cY = -canvas.height / 2;

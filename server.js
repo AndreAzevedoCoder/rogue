@@ -45,6 +45,9 @@ sockets.on('connection', function(socket){
     socket.on('clientInput', function(input){
         game.handleClientInput(input)
     });
+    socket.on('playerClick', function(player){
+        game.shoot(player)
+    });
 
 });
 
