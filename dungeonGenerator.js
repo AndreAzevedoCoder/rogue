@@ -676,8 +676,8 @@ function createRoom(startx,starty,roomtype){
                     var X = startx+(-w*GRID)
                     var Y = starty+(-h*GRID)
                     if(h >= roomHeightMedia-4){
-                      console.log("wall!")
-                      insertObject(X,Y,{type: 'wall'})
+                
+                      insertObject(X,Y,{type: 'wall', solid: true})
                     }else{
                       insertObject(X,Y,{type: 'floor'})
                     }

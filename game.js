@@ -119,7 +119,6 @@ function shoot(player){
         state.players[player.playerID].angle = angle
         var velocity = 45;
         let bullet = new quadtree.Point(player.x,player.y,{type: 'bullet',playerID: player.playerID,angle: angle,velocity: velocity});
-        console.log(bullet)
         state.bullets[Object.keys(state.bullets).length] = bullet
         state.dungeon.qtree.insert(bullet);
     }
@@ -131,13 +130,35 @@ function processWorldStatus(){
     })
     for(var i = 0; i < Object.keys(state.bullets).length; i++){
         var bullet = state.bullets[i]
+
+        let bulletRange = new dungeonGenerator.Rectangle(bullet.x, bullet.y, bullet.userData.velocity, bullet.userData.velocity);
+        let nextToBullet = state.dungeon.qtree.query(bulletRange);
+
+        nextToBullet.forEach(next => {
+            console.log(next)
+            if(next.userData.solid == true){
+                bullet.stop = true
+                bullet.x = 100000
+            }
+            if(next.userData.type == 'player'){
+                if(next.userData.playerID !== bullet.userData.playerID){
+
+                    delete bullet
+                    // bullet.stop = true
+                    // bullet.x = 100000
+
+                }
+            }
+        });
+
+
         var angle = bullet.userData.angle * Math.PI/180
         var x = Math.cos(angle);
         var y = Math.sin(angle);
         bullet.x += y * bullet.userData.velocity
         bullet.y += x * bullet.userData.velocity
+        
     }
-
 }
 function minusMoveTimer(){
     var players = Object.getOwnPropertyNames(state.players)
