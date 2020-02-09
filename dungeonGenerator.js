@@ -11,6 +11,7 @@ class Point {
       this.y = y;
       this.userData = data;
     }
+    
   }
   
   class Rectangle {
@@ -123,7 +124,7 @@ class Point {
     }
   
     static create() {
-      let DEFAULT_CAPACITY = 8;
+      let DEFAULT_CAPACITY = 4;
       if (arguments.length === 0) {
         if (typeof width === "undefined") {
           throw new TypeError("No global width defined");
@@ -250,17 +251,53 @@ class Point {
   
       if (this.points.length < this.capacity) {
         this.points.push(point);
-        return this;
+        return true;
       }
-  
+      
       if (!this.divided) {
         this.subdivide();
       }
+      
+      if(this.divided == true){
+        
+        const northeast = this.northeast.boundary
+        const northwest = this.northwest.boundary
+        const southeast = this.southeast.boundary
+        const southwest = this.southwest.boundary
+        
+        const pointX = point.x
+        const pointY = point.y
+        
+        console.log(northeast)
+        console.log(northwest)
+        console.log(southeast)
+        console.log(southwest)
+
+
+        if(pointX > northeast.x-northeast.w && pointX < northeast.w + northeast.x-northeast.w && pointY > northeast.y - northeast.h && pointY < northeast.h + northeast.y-northeast.h ){
+          console.log('nh')
+          return this.northeast.insert(point)
+        }
+        if(pointX > northwest.x-northwest.w && pointX < northwest.w + northwest.x-northwest.w && pointY > northwest.y - northwest.h && pointY < northwest.h + northwest.y-northwest.h){
+          console.log('nw')
+          return this.northwest.insert(point)
+        }
+        if(pointX > southeast.x-southeast.w && pointX < southeast.w + southeast.x-southeast.w && pointY > southeast.y - southeast.h && pointY < southeast.h + southeast.y - southeast.h){
+          console.log('sh')
+          return this.southeast.insert(point)
+        }
+        if(pointX > southwest.x-southwest.w && pointX < southwest.w + southwest.x-southwest.w && pointY > southwest.y - southwest.h && pointY < southwest.h + southwest.y - southwest.h){
+          console.log('sw')
+          return this.southwest.insert(point)
+        }
   
-      return (this.northeast.insert(point) || this.northwest.insert(point) ||
-        this.southeast.insert(point) || this.southwest.insert(point));
+    
+        // return (this.northeast.insert(point) || this.northwest.insert(point) ||
+        //   this.southeast.insert(point) || this.southwest.insert(point));
+      }
     }
-  
+
+
     query(range, found) {
       if (!found) {
         found = [];
@@ -345,28 +382,8 @@ class Point {
       // Slice to return correct count (breaks ties)
       return points.slice(0, count);
     }
-    realDelete(point,points){
-      console.log(points)
-      for(var i = 0; i < points.length; i++){
-        var object = state.dungeon.qtree.points[i]
-        if(object !== undefined){
-            if(object.userData !== undefined){
-                if(object.userData.id !== undefined){
-                    if(object.userData.id == point.userData.id){
-                        points.splice(i, 1); 
-                        console.log("deleted: ",points[i].userData.id)
-                    }
-                }
-            }
-        }
-      }
-    }
-    delete(){
-      let node = this
-      node.forEach(point => {
-        console.log("point",point)
-      });
-    }
+
+
 
   
     forEach(fn) {
@@ -411,7 +428,23 @@ class Point {
 
 
 
+function deleteObject(objectID,json){
 
+  var data = json
+  function RemoveNode(id) {
+      return data.filter(function(emp) {
+          if (emp.id == id) {
+              return false;
+          }
+          return true;
+      });
+  }
+
+  var newData = RemoveNode(objectID);
+
+
+  return newData;
+}
 
 
 
@@ -646,6 +679,57 @@ function makeHall(xNew,yNew,xOld,yOld){
     }
 }
 
+function deletePoint(point,node){
+
+  const pointX = point.x
+  const pointY = point.y
+
+  
+  if(node.points !== undefined){
+    for(var i = 0; i < node.points.length; i++){
+        var object = node.points[i]
+        if(object !== undefined){
+            if(object.userData !== undefined){
+                if(object.userData.id !== undefined){
+                    if(object.userData.id == point.userData.id){
+                        console.log("deleted: ",node.points[i].userData.id)
+                        node.points.splice(i, 1); 
+                    }
+                }
+            }
+        }
+    }
+  }
+
+  console.log(node.points)
+  if(node.divided == true){
+
+
+
+      const northeast = node.northeast.boundary
+      const northwest = node.northwest.boundary
+      const southeast = node.southeast.boundary
+      const southwest = node.southwest.boundary
+      if(pointX > northeast.x-northeast.w && pointX < northeast.w + northeast.x-northeast.w && pointY > northeast.y - northeast.h && pointY < northeast.h + northeast.y-northeast.h ){
+          //console.log('northeast')
+          deletePoint(point,node.northeast)
+      }
+      if(pointX > northwest.x-northwest.w && pointX < northwest.w + northwest.x-northwest.w && pointY > northwest.y - northwest.h && pointY < northwest.h + northwest.y-northwest.h){
+          //console.log('northwest')
+          deletePoint(point,node.northwest)
+      }
+      if(pointX > southeast.x-southeast.w && pointX < southeast.w + southeast.x-southeast.w && pointY > southeast.y - southeast.h && pointY < southeast.h + southeast.y - southeast.h){
+          //console.log('southeast')
+          deletePoint(point,node.southeast)
+      }
+      if(pointX > southwest.x-southwest.w && pointX < southwest.w + southwest.x-southwest.w && pointY > southwest.y - southwest.h && pointY < southwest.h + southwest.y - southwest.h){
+          //console.log('southwest')
+          deletePoint(point,node.southwest)
+      }
+  }
+}
+
+
 function random(max){
     return Math.floor( Math.random()*max)
 }
@@ -741,7 +825,14 @@ function start(width,height,roomCount){
     let boundary = new Rectangle(width / 2, height / 2, width / 2, height / 2);
     dungeon.qtree = QuadTree.create(boundary);
 
-    createRoom(500,500,0)
+    insertObject(500,500,{type: 'middlewall', solid: true})
+    insertObject(540,500,{type: 'middlewall', solid: true})
+    insertObject(580,500,{type: 'middlewall', solid: true})
+    insertObject(620,500,{type: 'middlewall', solid: true})
+    insertObject(700,500,{type: 'middlewall', solid: true})
+
+    //createRoom(500,500,0)
+    
     
     // fillDungeon(width,height)
     // buildRooms(roomCount,width,height)
@@ -756,6 +847,8 @@ module.exports = {
     Point,
     Rectangle, 
     QuadTree, 
-    Circle 
+    Circle ,
+    deleteObject,
+    deletePoint
 }
 

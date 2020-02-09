@@ -36,6 +36,7 @@ function addPlayer(playerID){
     playerY = 500//spawnRoom.y
 
     let p = new quadtree.Point(playerX,playerY,{type: 'player',playerID: playerID});
+
     state.dungeon.qtree.insert(p);
     state.players[playerID] = ({
         x: playerX,
@@ -44,6 +45,10 @@ function addPlayer(playerID){
         angle: 0,
         moveTimer: 0,
     })
+
+
+    
+
     notifyAll({
         type: 'playerAdded',
         sendTo: 'player',
@@ -51,6 +56,8 @@ function addPlayer(playerID){
         myself: state.players[playerID]
     })
     renderScreen(playerID,0)
+
+    //dungeonGenerator.deletePoint(playerX,playerY,state.dungeon.qtree)
 }
 
 function renderScreen(playerID){
@@ -131,78 +138,17 @@ function shoot(player){
             if(angle > 0){
 
                 let bullet = new quadtree.Point(Math.cos(angle*Math.PI/180)*6+30+player.x,player.y+12,{id:makeid(10),type: 'bullet',playerID: player.playerID,angle: angle,velocity: velocity});
-                state.bullets[Object.keys(state.bullets).length] = bullet
                 state.dungeon.qtree.insert(bullet);
+                state.bullets[Object.keys(state.bullets).length] = bullet
             }else{
                 let bullet = new quadtree.Point(-Math.cos(angle*Math.PI/180)*6+player.x-15,player.y+12,{id:makeid(10),type: 'bullet',playerID: player.playerID,angle: angle,velocity: velocity});
-                state.bullets[Object.keys(state.bullets).length] = bullet
                 state.dungeon.qtree.insert(bullet);
+                state.bullets[Object.keys(state.bullets).length] = bullet
             }
         }
     }
 }
-function deletePoint(point,node){
-    pointX = point.x
-    pointY = point.y
-    for(var i = 0; i < node.points.length; i++){
-        var object = node.points[i]
-        if(object !== undefined){
-            if(object.userData !== undefined){
-                if(object.userData.id !== undefined){
-                    if(object.userData.id == point.userData.id){
-                        console.log("deleted: ",node.points[i].userData.id)
-                        node.points.splice(i, 1); 
-                    }
-                }
-            }
-        }
-    }
 
-    if(node.divided == true){
-
-
-
-        const northeast = node.northeast.boundary
-        const northwest = node.northwest.boundary
-        const southeast = node.southeast.boundary
-        const southwest = node.southwest.boundary
-        if(pointX > northeast.x-northeast.w && pointX < northeast.w + northeast.x-northeast.w && pointY > northeast.y - northeast.h && pointY < northeast.h + northeast.y-northeast.h ){
-            //console.log('northeast')
-            deletePoint(point,node.northeast)
-        }
-        if(pointX > northwest.x-northwest.w && pointX < northwest.w + northwest.x-northwest.w && pointY > northwest.y - northwest.h && pointY < northwest.h + northwest.y-northwest.h){
-            //console.log('northwest')
-            deletePoint(point,node.northwest)
-        }
-        if(pointX > southeast.x-southeast.w && pointX < southeast.w + southeast.x-southeast.w && pointY > southeast.y - southeast.h && pointY < southeast.h + southeast.y - southeast.h){
-            //console.log('southeast')
-            deletePoint(point,node.southeast)
-        }
-        if(pointX > southwest.x-southwest.w && pointX < southwest.w + southwest.x-southwest.w && pointY > southwest.y - southwest.h && pointY < southwest.h + southwest.y - southwest.h){
-            //console.log('southwest')
-            deletePoint(point,node.southwest)
-        }
-    }
-    
-    //if(pointX > northeast.x)
-}
-
-// function deletePoint(id){
-//     console.log("chamou?",id)
-//     for(var i = 0; i < state.dungeon.qtree.length; i++){
-//         var object = state.dungeon.qtree[i]
-//         if(object !== undefined){
-//             if(object.userData !== undefined){
-//                 if(object.userData.id !== undefined){
-//                     if(object.userData.id == id){
-//                         console.log("deleted: ",state.dungeon.qtree[i].userData.id)
-//                         state.dungeon.qtree.points.splice(i, 1); 
-//                     }
-//                 }
-//             }
-//         }
-//     }
-// }
 function processWorldStatus(){
 
 
@@ -218,12 +164,19 @@ function processWorldStatus(){
             
             nextToBullet.forEach(next => {
                 if(next.userData.solid == true){
-                    deletePoint(bullet,state.dungeon.qtree)
                     
+                    ////state.dungeon.qtree.fromJSON( dungeonGenerator.deleteObject(bullet.userData.id,state.dungeon.qtree.toJSON()),0,0,width,height,8)
+                    dungeonGenerator.deletePoint(bullet,state.dungeon.qtree)
+                    notifyAll({
+                        type: 'json',
+                        sendTo: 'player',
+                        player: bullet.userData.playerID,
+                        json: state.dungeon.qtree.toJSON()
+                    })
                 }
                 if(next.userData.type == 'player'){
                     if(next.userData.playerID !== bullet.userData.playerID){
-                        deletePoint(bullet,state.dungeon.qtree)
+                        dungeonGenerator.deletePoint(bullet,state.dungeon.qtree)
                     }
                 }
             });
