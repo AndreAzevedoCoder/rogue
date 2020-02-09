@@ -38,10 +38,14 @@ class Point {
     }
   
     contains(point) {
-      return (point.x >= this.x - this.w &&
-        point.x <= this.x + this.w &&
-        point.y >= this.y - this.h &&
-        point.y <= this.y + this.h);
+      try{
+        return (point.x >= this.x - this.w &&
+          point.x <= this.x + this.w &&
+          point.y >= this.y - this.h &&
+          point.y <= this.y + this.h);
+      }catch(e){
+
+      }
     }
   
   
@@ -246,7 +250,7 @@ class Point {
   
       if (this.points.length < this.capacity) {
         this.points.push(point);
-        return true;
+        return this;
       }
   
       if (!this.divided) {
@@ -341,6 +345,29 @@ class Point {
       // Slice to return correct count (breaks ties)
       return points.slice(0, count);
     }
+    realDelete(point,points){
+      console.log(points)
+      for(var i = 0; i < points.length; i++){
+        var object = state.dungeon.qtree.points[i]
+        if(object !== undefined){
+            if(object.userData !== undefined){
+                if(object.userData.id !== undefined){
+                    if(object.userData.id == point.userData.id){
+                        points.splice(i, 1); 
+                        console.log("deleted: ",points[i].userData.id)
+                    }
+                }
+            }
+        }
+      }
+    }
+    delete(){
+      let node = this
+      node.forEach(point => {
+        console.log("point",point)
+      });
+    }
+
   
     forEach(fn) {
       this.points.forEach(fn);
@@ -715,7 +742,7 @@ function start(width,height,roomCount){
     dungeon.qtree = QuadTree.create(boundary);
 
     createRoom(500,500,0)
-
+    
     // fillDungeon(width,height)
     // buildRooms(roomCount,width,height)
 

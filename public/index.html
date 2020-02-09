@@ -45,6 +45,7 @@
             socket.on('playerAdded', (command) => {
                 state.myself.x = command.myself.x
                 state.myself.y = command.myself.y
+                state.myself.angle = 0
                 state.myself.moveTimer = 0;
                 localRenderScreen()
             })
@@ -62,11 +63,14 @@
                     let update = latestUpdates[0]
                     if(update != null){                        
                         state.aroundPlayer = update.aroundPlayer
-                        for(var i = 0; i < 11; i++){
-                            state.myself.x = update.playerX/10 * i
-                            state.myself.y = update.playerY/10 * i
-                            localRenderScreen()
-                        }
+                        // for(var i = 0; i < 11; i++){
+                        //     state.myself.x = update.playerX/10 * i
+                        //     state.myself.y = update.playerY/10 * i
+                        //     localRenderScreen()
+                        // }
+                        state.myself.x = update.playerX
+                        state.myself.y = update.playerY
+                        window.requestAnimationFrame(localRenderScreen)
                         delete latestUpdates[0]
                     }
                 }

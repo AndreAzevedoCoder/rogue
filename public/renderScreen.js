@@ -3,12 +3,10 @@ const context = canvas.getContext('2d')
 const GRID = 40
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
-
-
+context.imageSmoothingEnabled = false
 const ViewX = 32
 const ViewY = 18
-context.fillStyle = "black";
-context.fillRect(0, 0, canvas.width, canvas.height);
+
 function drawImage(img, x, y, width, height, deg, flip, flop, center,centerX,centerY) {
 
     context.save();
@@ -40,6 +38,11 @@ function drawImage(img, x, y, width, height, deg, flip, flop, center,centerX,cen
     
     context.restore();
 }
+var compositeTypes = [
+    'source-over','source-in','source-out','source-atop',
+    'destination-over','destination-in','destination-out',
+    'destination-atop','lighter','darker','copy','xor'
+ ];
 
 function localRenderScreen(){
     context.setTransform(1,0,0,1,0,0);
@@ -52,21 +55,25 @@ function localRenderScreen(){
         var Y = canvas.height/2+(p.y-myself.y)
 
 
-
         if(p.userData.type == 'floor' ){
             if(p.userData.random == 0 ){
+                context.globalCompositeOperation = "destination-over";
                 context.drawImage(floor0,X,Y,GRID,GRID)
             }
             if(p.userData.random == 1 ){
+                context.globalCompositeOperation = "destination-over";
                 context.drawImage(floor1,X,Y,GRID,GRID)
             }
             if(p.userData.random == 2 ){
+                context.globalCompositeOperation = "destination-over";
                 context.drawImage(floor2,X,Y,GRID,GRID)
             }
             if(p.userData.random == 3 ){
+                context.globalCompositeOperation = "destination-over";
                 context.drawImage(floor3,X,Y,GRID,GRID)
             }
             if(p.userData.random == 4 ){
+                context.globalCompositeOperation = "destination-over";
                 context.drawImage(floor4,X,Y,GRID,GRID)
             }
         }
@@ -81,17 +88,19 @@ function localRenderScreen(){
         if(p.userData.type == 'bottomwall' ){
             drawImage(bottomwall0,X,Y,GRID,GRID,0,false,true)
         } 
-    }
-    for(var i = 0; i < playerView.length; i++){
-        var p = playerView[i]
+
+
+
         if(p.userData.type == 'player' ){
             var X = canvas.width/2+(p.x-myself.x)
             var Y = canvas.height/2+(p.y-myself.y)
             if(p.userData.playerID != state.myself.playerID){
                 if(p.userData.angle > 0){
+                    context.globalCompositeOperation = "source-over";
                     drawImage(revolver,X+10,Y+2,20,28,p.userData.angle,true,true,true,-24,-19)
                     drawImage(playeridleside,X,Y,28,38,0)
                 }else{
+                    context.globalCompositeOperation = "source-over";
                     drawImage(revolver,X+10,Y+2,20,28,p.userData.angle,false,true,true,20,-16)
                     drawImage(playeridleside,X,Y,28,38,0,true)
                 }
@@ -100,17 +109,22 @@ function localRenderScreen(){
         if(p.userData.type == 'bullet' ){
             var X = canvas.width/2+(p.x-myself.x)
             var Y = canvas.height/2+(p.y-myself.y)
+            context.globalCompositeOperation = "source-over";
             context.drawImage(bullet0,X,Y,14,14)
         } 
     }
+
+        context.globalCompositeOperation = "source-over";
+        if(state.myself.angle > 0){
+            drawImage(revolver,canvas.width/2+10,canvas.height/2+2,20,28,state.myself.angle,true,true,true,-24,-19)
+            drawImage(playeridleside,canvas.width/2,canvas.height/2,28,38,0)
+        }else{
+            drawImage(revolver,canvas.width/2+10,canvas.height/2+2,20,28,state.myself.angle,false,true,true,20,-19)
+            drawImage(playeridleside,canvas.width/2,canvas.height/2,28,38,0,true)
+        }
+
     
-    if(state.myself.angle > 0){
-        drawImage(revolver,canvas.width/2+10,canvas.height/2+2,20,28,state.myself.angle,true,true,true,-24,-19)
-        drawImage(playeridleside,canvas.width/2,canvas.height/2,28,38,0)
-    }else{
-        drawImage(revolver,canvas.width/2+10,canvas.height/2+2,20,28,state.myself.angle,false,true,true,20,-19)
-        drawImage(playeridleside,canvas.width/2,canvas.height/2,28,38,0,true)
-    }
+
     // context.fillStyle = 'yellow'
     // context.fillRect((canvas.width/GRID * 0.5)*GRID,(canvas.height/GRID * 0.5)*GRID,GRID,GRID)
 }

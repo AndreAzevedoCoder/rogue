@@ -240,6 +240,7 @@ class Point {
     }
   
     insert(point) {
+      console.log(oi)
       if (!this.boundary.contains(point)) {
         return false;
       }
