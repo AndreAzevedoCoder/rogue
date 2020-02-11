@@ -52,6 +52,7 @@
             var latestUpdates = {}
 
             socket.on('renderScreen', (command) => {
+                console.log(command)
                 latestUpdates[Object.keys(latestUpdates).length] = command
                 applyUpdates()
             })

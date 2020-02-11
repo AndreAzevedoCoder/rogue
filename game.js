@@ -1,5 +1,5 @@
 const dungeonGenerator = require('./dungeonGenerator');
-const quadtree = require('./qtree')
+
 
 const observers = []
 function subscribe(observerFunction) {
@@ -18,35 +18,42 @@ state = {
     dungeon: {},
     bullets: {}
 }
-const width = 100000;
-const height = 100000;
+const width = 1000000;
+const height = 1000000;
 const roomCount = 750
 function start(){
     state.dungeon = dungeonGenerator.start(width,height,roomCount);
     
 }
 
-function insertObject(x,y,data){
-    let p = new quadtree.Point(x, y,data);
-    state.dungeon.qtree.insert(p);
-}
+
 function addPlayer(playerID){
     //var spawnRoom = state.dungeon.rooms[Math.floor( Math.random()*roomCount)]
-    playerX = 500//spawnRoom.x
-    playerY = 500//spawnRoom.y
+    playerX = 1000//spawnRoom.x
+    playerY = 1000//spawnRoom.y
 
-    let p = new quadtree.Point(playerX,playerY,{type: 'player',playerID: playerID});
+    //let p = new quadtree.Point(playerX,playerY,{type: 'player',playerID: playerID});
 
-    state.dungeon.qtree.insert(p);
-    state.players[playerID] = ({
+    var playerPoint = {
         x: playerX,
         y: playerY,
-        p: p,
-        angle: 0,
-        moveTimer: 0,
-    })
-
-
+        width: 28,
+        height: 38,
+        data: {type: 'player',playerID: playerID,angle: 90}
+      }
+      
+      state.players[playerID] = ({
+          x: playerX,
+          y: playerY,
+          width: 28,
+          height: 38,
+          playerPoint: playerPoint,
+          angle: 90,
+          moveTimer: 0,
+        })
+    state.dungeon.qtree.insertObject(playerPoint);
+        
+        
     
 
     notifyAll({
@@ -65,12 +72,12 @@ function renderScreen(playerID){
     playerX = player.x
     playerY = player.y
 
-    player.p.x = playerX
-    player.p.y = playerY
-    player.p.userData.angle = player.angle
-    let range = new dungeonGenerator.Rectangle(playerX, playerY, 1280, 720);
-    let playerView = state.dungeon.qtree.query(range);
+    var aroundPlayer;
     
+
+    console.log(playerX-1280,playerY-720,playerX+1280,playerY+720)
+    aroundPlayer = state.dungeon.qtree.getObjectsInRange(playerX-1280,playerY-720,playerX+1280,playerY+720)
+    console.log(aroundPlayer)
     notifyAll({
         type: 'renderScreen',
         sendTo: 'player',
@@ -78,11 +85,12 @@ function renderScreen(playerID){
         playerX: playerX,
         playerY: playerY,
         moveTimer: 0,
-        aroundPlayer: playerView,
+        aroundPlayer: aroundPlayer,
     })
 }
 
 function removePlayer(playerID){
+    state.dungeon.qtree.deleteObject( state.players[playerID].playerPoint )
     delete state.players[playerID]
 }
 
@@ -90,6 +98,9 @@ function removePlayer(playerID){
 function handleClientInput(input){
     const velocity = 35
     const timer = 20
+
+    //state.dungeon.qtree.removeObject(player.playerPoint)
+    //state.dungeon.qtree.insert(player.playerPoint)
 
     if(state.players[input.playerID] !== undefined){
         if(state.players[input.playerID].moveTimer == 0){
@@ -137,12 +148,27 @@ function shoot(player){
             var velocity = 70;
             if(angle > 0){
 
-                let bullet = new quadtree.Point(Math.cos(angle*Math.PI/180)*6+30+player.x,player.y+12,{id:makeid(10),type: 'bullet',playerID: player.playerID,angle: angle,velocity: velocity});
-                state.dungeon.qtree.insert(bullet);
+                var bullet = {
+                    x: Math.cos(angle*Math.PI/180)*6+30+player.x,
+                    y: player.y+12,
+                    width: 14,
+                    height: 14,
+                    data: {id:makeid(10),type: 'bullet',playerID: player.playerID,angle: angle,velocity: velocity}
+                }
+
+                //state.dungeon.qtree.insert(bullet);
                 state.bullets[Object.keys(state.bullets).length] = bullet
             }else{
-                let bullet = new quadtree.Point(-Math.cos(angle*Math.PI/180)*6+player.x-15,player.y+12,{id:makeid(10),type: 'bullet',playerID: player.playerID,angle: angle,velocity: velocity});
-                state.dungeon.qtree.insert(bullet);
+
+                var bullet = {
+                    x: -Math.cos(angle*Math.PI/180)*6+player.x-15,
+                    y: player.y+12,
+                    width: 14,
+                    height: 14,
+                    data: {id:makeid(10),type: 'bullet',playerID: player.playerID,angle: angle,velocity: velocity}
+                }
+
+                //state.dungeon.qtree.insert(bullet);
                 state.bullets[Object.keys(state.bullets).length] = bullet
             }
         }
@@ -150,43 +176,52 @@ function shoot(player){
 }
 
 function processWorldStatus(){
-
-
     var players = Object.getOwnPropertyNames(state.players)
     players.forEach(player => {
+        state.dungeon.qtree.updateObject(state.players[player].playerPoint,state.players[player])
+        state.players[player].playerPoint = state.players[player]
         renderScreen(player)
     })
     for(var i = 0; i < Object.keys(state.bullets).length; i++){
         var bullet = state.bullets[i]
         if(bullet !== undefined){
-            let bulletRange = new dungeonGenerator.Rectangle(bullet.x, bullet.y, bullet.userData.velocity, bullet.userData.velocity);
-            let nextToBullet = state.dungeon.qtree.query(bulletRange);
+            //let bulletRange = new dungeonGenerator.Rectangle(bullet.x, bullet.y, bullet.userData.velocity, bullet.userData.velocity);
+
+
+            var bulletArea = {
+                x: bullet.x-2,
+                y: bullet.y-2,
+                width: 4,
+                height: 4
+            };
+        
+            // let nextToBullet = state.dungeon.qtree.retrieve( bulletArea )
             
-            nextToBullet.forEach(next => {
-                if(next.userData.solid == true){
+            // console.log(state.dungeon.qtree.getObjectNode(nextToBullet))
+            // nextToBullet.forEach(next => {
+            //     if(next.data.solid == true){
                     
-                    ////state.dungeon.qtree.fromJSON( dungeonGenerator.deleteObject(bullet.userData.id,state.dungeon.qtree.toJSON()),0,0,width,height,8)
-                    dungeonGenerator.deletePoint(bullet,state.dungeon.qtree)
-                    notifyAll({
-                        type: 'json',
-                        sendTo: 'player',
-                        player: bullet.userData.playerID,
-                        json: state.dungeon.qtree.toJSON()
-                    })
-                }
-                if(next.userData.type == 'player'){
-                    if(next.userData.playerID !== bullet.userData.playerID){
-                        dungeonGenerator.deletePoint(bullet,state.dungeon.qtree)
-                    }
-                }
-            });
+            //         ////state.dungeon.qtree.fromJSON( dungeonGenerator.deleteObject(bullet.userData.id,state.dungeon.qtree.toJSON()),0,0,width,height,8)
+            //         //if(next.x > bullet.x && next.y)
+
+
+                    
+                    
+            //     }
+            //     if(next.data.type == 'player'){
+            //         if(next.data.playerID !== bullet.data.playerID){
+                        
+            //             state.dungeon.qtree.removeObject(bullet)
+            //         }
+            //     }
+            // });
     
     
-            var angle = bullet.userData.angle * Math.PI/180
+            var angle = bullet.data.angle * Math.PI/180
             var x = Math.cos(angle);
             var y = Math.sin(angle);
-            bullet.x += y * bullet.userData.velocity
-            bullet.y += x * bullet.userData.velocity
+            bullet.x += y * bullet.data.velocity
+            bullet.y += x * bullet.data.velocity
         }
 
         

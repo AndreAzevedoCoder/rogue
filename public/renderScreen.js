@@ -55,58 +55,58 @@ function localRenderScreen(){
         var Y = canvas.height/2+(p.y-myself.y)
 
 
-        if(p.userData.type == 'floor' ){
-            if(p.userData.random == 0 ){
+        if(p.data.type == 'floor' ){
+            if(p.data.random == 0 ){
                 context.globalCompositeOperation = "destination-over";
                 context.drawImage(floor0,X,Y,GRID,GRID)
             }
-            if(p.userData.random == 1 ){
+            if(p.data.random == 1 ){
                 context.globalCompositeOperation = "destination-over";
                 context.drawImage(floor1,X,Y,GRID,GRID)
             }
-            if(p.userData.random == 2 ){
+            if(p.data.random == 2 ){
                 context.globalCompositeOperation = "destination-over";
                 context.drawImage(floor2,X,Y,GRID,GRID)
             }
-            if(p.userData.random == 3 ){
+            if(p.data.random == 3 ){
                 context.globalCompositeOperation = "destination-over";
                 context.drawImage(floor3,X,Y,GRID,GRID)
             }
-            if(p.userData.random == 4 ){
+            if(p.data.random == 4 ){
                 context.globalCompositeOperation = "destination-over";
                 context.drawImage(floor4,X,Y,GRID,GRID)
             }
         }
 
 
-        if(p.userData.type == 'topwall' ){
+        if(p.data.type == 'topwall' ){
             context.drawImage(topwall0,X,Y,GRID,GRID)
         } 
-        if(p.userData.type == 'middlewall' ){
+        if(p.data.type == 'middlewall' ){
             context.drawImage(middlewall0,X,Y,GRID,GRID)
         } 
-        if(p.userData.type == 'bottomwall' ){
+        if(p.data.type == 'bottomwall' ){
             drawImage(bottomwall0,X,Y,GRID,GRID,0,false,true)
         } 
 
 
 
-        if(p.userData.type == 'player' ){
+        if(p.data.type == 'player' ){
             var X = canvas.width/2+(p.x-myself.x)
             var Y = canvas.height/2+(p.y-myself.y)
-            if(p.userData.playerID != state.myself.playerID){
-                if(p.userData.angle > 0){
+            if(p.data.playerID != state.myself.playerID){
+                if(p.data.angle > 0){
                     context.globalCompositeOperation = "source-over";
-                    drawImage(revolver,X+10,Y+2,20,28,p.userData.angle,true,true,true,-24,-19)
+                    drawImage(revolver,X+10,Y+2,20,28,p.data.angle,true,true,true,-24,-19)
                     drawImage(playeridleside,X,Y,28,38,0)
                 }else{
                     context.globalCompositeOperation = "source-over";
-                    drawImage(revolver,X+10,Y+2,20,28,p.userData.angle,false,true,true,20,-16)
+                    drawImage(revolver,X+10,Y+2,20,28,p.data.angle,false,true,true,20,-16)
                     drawImage(playeridleside,X,Y,28,38,0,true)
                 }
             }
         } 
-        if(p.userData.type == 'bullet' ){
+        if(p.data.type == 'bullet' ){
             var X = canvas.width/2+(p.x-myself.x)
             var Y = canvas.height/2+(p.y-myself.y)
             context.globalCompositeOperation = "source-over";

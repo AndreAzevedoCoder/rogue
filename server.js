@@ -7,11 +7,10 @@ const http = require('http');
 const server = http.createServer(app)
 const sockets = socketio(server)
 
-sss = require('simple-stats-server')
-stats = sss()
+
 
 game.start()
-app.use('/stats', stats)
+
 app.use(express.static(__dirname + "/public"));
 app.get('/', function(req, res){
     res.sendFile(__dirname + '/public/index.html');
