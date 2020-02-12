@@ -1,4 +1,15 @@
-const quadTree = require('./quadtree');
+const quadTree = require('./quadTree');
+
+
+function makeid(length) {
+  var result           = '';
+  var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  var charactersLength = characters.length;
+  for ( var i = 0; i < length; i++ ) {
+     result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
+}
 
 function random(max){
     return Math.floor( Math.random()*max)
@@ -48,13 +59,13 @@ function createRoom(startx,starty,roomtype){
                     var Y = starty+(-h*GRID)
                     if(h >= roomHeightMedia-2){
                       if(h == roomHeightMedia-1){
-                        dungeon.qtree.insertObject({x:X,y:Y,data:{type: 'topwall', solid: true}})
+                        dungeon.qtree.insertObject({id: makeid(10),x:X,y:Y,width: GRID,height:GRID,data:{type: 'topwall', solid: true}})
                       }
                       if(h == roomHeightMedia-2){
-                        dungeon.qtree.insertObject({x:X,y:Y,data:{type: 'middlewall', solid: true}})
+                        dungeon.qtree.insertObject({id: makeid(10),x:X,y:Y,width: GRID,height:GRID,data:{type: 'middlewall', solid: true}})
                       }
                     }else{
-                      dungeon.qtree.insertObject({x:X,y:Y,data:{type: 'floor', random: random(5)}})
+                      dungeon.qtree.insertObject({id: makeid(10),x:X,y:Y,width: GRID,height:GRID,data:{type: 'floor', random: random(5)}})
                     }
                       
                     
@@ -96,11 +107,6 @@ function start(width,height,roomCount){
     );
 
     createRoom(1000,1000,0)
-
-
-
-    var d = dungeon.qtree.getObjectsInRange(1000-640,1000-360,1000+640,1000+360)
-    console.log(d)
     return dungeon;
 }
 
