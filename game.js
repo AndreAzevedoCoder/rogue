@@ -140,7 +140,7 @@ function shoot(player){
         const angle = Math.floor(player.angle)
         if(state.players[player.playerID] !== undefined){
             state.players[player.playerID].angle = angle
-            var velocity = 1;
+            var velocity = 20;
             if(angle > 0){
 
                 var bullet = {
@@ -179,6 +179,7 @@ function processWorldStatus(){
         renderScreen(player)
     })
 
+
     state.bullets.forEach(bullet => {
         
         var nextToBullet = state.dungeon.qtree.checkCollision( bullet )
@@ -195,8 +196,9 @@ function processWorldStatus(){
                     }
                 }
             });
-    
+            
         }
+
         var angle = bullet.data.angle * Math.PI/180
         var x = Math.cos(angle);
         var y = Math.sin(angle);

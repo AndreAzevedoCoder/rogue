@@ -81,10 +81,10 @@ class quadTree {
         return get
     }
     getObjectsAround (objectToFind,around){
-        if(objectToFind.velocity == undefined){
+        if(objectToFind.data.velocity == undefined){
             return this.getObjectsInRange(objectToFind.x-objectToFind.width-around,  objectToFind.y-objectToFind.height-around,  objectToFind.x+objectToFind.width+around,  objectToFind.y+objectToFind.height+around)
         }else{
-            return this.getObjectsInRange(objectToFind.x-objectToFind.width-around-objectToFind.velocity,  objectToFind.y-objectToFind.height-around-objectToFind.velocity,  objectToFind.x+objectToFind.width+around+objectToFind.velocity,  objectToFind.y+objectToFind.height+around+objectToFind.velocity)
+            return this.getObjectsInRange(objectToFind.x-objectToFind.width-around-objectToFind.data.velocity,  objectToFind.y-objectToFind.height-around-objectToFind.data.velocity,  objectToFind.x+objectToFind.width+around+objectToFind.data.velocity,  objectToFind.y+objectToFind.height+around+objectToFind.data.velocity)
         }
     }
 

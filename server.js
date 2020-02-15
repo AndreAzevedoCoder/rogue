@@ -22,11 +22,11 @@ server.listen(3000, function(){
 
 game.subscribe((command) => {
     if(command.sendTo == 'player'){
-        console.log(`> Emitting ${command.type} to ${command.player}`)
+        //console.log(`> Emitting ${command.type} to ${command.player}`)
         sockets.in(command.player).emit(command.type,command)
     }
     if(command.sendTo == 'all'){
-        console.log(`> Emitting ${command.type} to all`)
+        //console.log(`> Emitting ${command.type} to all`)
         sockets.emit(command.type,command)
     }
 });
