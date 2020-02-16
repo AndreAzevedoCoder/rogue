@@ -49,6 +49,17 @@ function localRenderScreen(){
     context.clearRect(0, 0, canvas.width, canvas.height); 
     const myself = state.myself
     const playerView = state.aroundPlayer
+
+    //HUD 
+    context.fillStyle = '#fff';
+    context.font = "30px Verdana";
+
+    if(state.playerState != undefined){
+        context.fillText(state.playerState.data.ammo+'/8', 10, 90);
+    }
+
+
+
     for(var i = 0; i < playerView.length; i++){
         var p = playerView[i]
         var X = canvas.width/2+(p.x-myself.x)

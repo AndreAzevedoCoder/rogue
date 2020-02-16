@@ -12,6 +12,7 @@ function notifyAll(command) {
         observerFunction(command)
     }
 }
+
 function makeid(length) {
     var result           = '';
     var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -21,15 +22,18 @@ function makeid(length) {
     }
     return result;
  }
- 
-
 
 var keyDowns = {};  
 
-document.onclick = function(ve){
+function shoot(){
     socket.emit('playerClick',{playerID: state.myself.playerID,  x: state.myself.x,  y: state.myself.y,  angle: state.myself.angle})
 }
-
+document.onmousedown = function(v2){
+    shootTimer = setInterval(shoot,10)
+}
+document.onmouseup = function (ve){
+    clearInterval(shootTimer)
+}
 document.onmousemove = function(ve){
     let cX = -canvas.width / 2;
     let cY = -canvas.height / 2;

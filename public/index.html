@@ -52,14 +52,10 @@
             var latestUpdates = {}
 
             socket.on('renderScreen', (command) => {
-                console.log(command)
                 latestUpdates[Object.keys(latestUpdates).length] = command
                 applyUpdates()
             })
 
-            socket.on('json', (command) => {
-                console.log(command)
-            })
 
             function applyUpdates(){
                 sendInput()
@@ -72,8 +68,9 @@
                         //     state.myself.y = update.playerY/10 * i
                         //     localRenderScreen()
                         // }
-                        state.myself.x = update.playerX
-                        state.myself.y = update.playerY
+                        state.myself.x = update.playerState.x
+                        state.myself.y = update.playerState.y
+                        state.playerState = update.playerState
                         window.requestAnimationFrame(localRenderScreen)
                         delete latestUpdates[0]
                     }
