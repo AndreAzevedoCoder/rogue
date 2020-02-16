@@ -73,27 +73,33 @@ function renderScreen(playerID){
     playerX = player.x
     playerY = player.y
 
-    var aroundPlayer;
-    
-    aroundPlayer = state.dungeon.qtree.getObjectsInRange(playerX-1280,playerY-720,playerX+1280,playerY+720)
+    var aroundPlayer = state.dungeon.qtree.getObjectsInRange(playerX-1280,playerY-720,playerX+1280,playerY+720)
+    var bulletAround = []
+    aroundPlayer.forEach(element => {
+        if(element.data.type == 'bullet'){
+            bulletAround.push(element)
+        }
+    });
     notifyAll({
         type: 'renderScreen',
         sendTo: 'player',
         player: playerID,
+
         playerX: playerX,
         playerY: playerY,
+        bulletAround: bulletAround,
         moveTimer: 0,
         aroundPlayer: aroundPlayer,
     })
 }
 
 function removePlayer(playerID){
-    state.dungeon.qtree.deleteObject( state.players[playerID].playerPoint )
+    state.dungeon.qtree.deleteObject( state.players[playerID].playerPoint.id )
     delete state.players[playerID]
 }
 
 function handleClientInput(input){
-    const velocity = 35
+    const velocity = 20
     const timer = 20
 
     //state.dungeon.qtree.removeObject(player.playerPoint)
@@ -141,15 +147,15 @@ function shoot(player){
         if(state.players[player.playerID] !== undefined){
             state.players[player.playerID].angle = angle
             var velocity = 20;
+            var duration = 35
             if(angle > 0){
-
                 var bullet = {
                     id: makeid(10),
                     x: Math.cos(angle*Math.PI/180)*6+30+player.x,
                     y: player.y+12,
                     width: 14,
                     height: 14,
-                    data: {type: 'bullet',playerID: player.playerID,angle: angle,velocity: velocity}
+                    data: {type: 'bullet',playerID: player.playerID,angle: angle,velocity: velocity,duration: duration}
                 }
 
                 state.dungeon.qtree.insertObject(bullet);
@@ -162,7 +168,7 @@ function shoot(player){
                     y: player.y+12,
                     width: 14,
                     height: 14,
-                    data: {type: 'bullet',playerID: player.playerID,angle: angle,velocity: velocity}
+                    data: {type: 'bullet',playerID: player.playerID,angle: angle,velocity: velocity,duration: duration}
                 }
 
                 state.dungeon.qtree.insertObject(bullet);
@@ -179,25 +185,14 @@ function processWorldStatus(){
         renderScreen(player)
     })
 
+    // var bulletArray = Object.getOwnPropertyNames(state.bullets)
+    // for(var i = 0; i < Object.keys(state.bullets).length; i++){
+    // let bullet = state.bullets[bulletArray[i]]
 
-    state.bullets.forEach(bullet => {
-        
-        var nextToBullet = state.dungeon.qtree.checkCollision( bullet )
-        if(nextToBullet != null){
-            nextToBullet.forEach(next => {
-                if(next.data.solid == true){
-                    state.dungeon.qtree.deleteObject(bullet.id)
-                    return
-                }
-                if(next.data.type == 'player'){
-                    if(next.data.playerID !== bullet.data.playerID){
-                        state.dungeon.qtree.deleteObject(bullet.id)
-                        return
-                    }
-                }
-            });
-            
-        }
+    var bulletArray = Object.getOwnPropertyNames(state.bullets)
+    for(var i = 0; i < Object.keys(state.bullets).length; i++){
+        let bullet = state.bullets[bulletArray[i]]
+
 
         var angle = bullet.data.angle * Math.PI/180
         var x = Math.cos(angle);
@@ -206,7 +201,31 @@ function processWorldStatus(){
         bullet.y += x * bullet.data.velocity
         state.dungeon.qtree.getObjectAndMove(bullet,bullet.x,bullet.y)
 
-    });
+        bullet.data.duration--
+        if(bullet.data.duration <= 0){
+            state.dungeon.qtree.deleteObject(bullet.id)
+            delete state.bullets[bulletArray[i]]
+        }
+        var nextToBullet = state.dungeon.qtree.checkCollision( bullet )
+        if(nextToBullet != null){
+            nextToBullet.forEach(next => {
+                if(next.data.solid == true){
+                    state.dungeon.qtree.deleteObject(bullet.id)
+                    delete state.bullets[bulletArray[i]]
+                    return
+                }
+                if(next.data.type == 'player'){
+                    if(next.data.playerID !== bullet.data.playerID){
+                        state.dungeon.qtree.deleteObject(bullet.id)
+                        delete state.bullets[bulletArray[i]]
+                        return
+                    }
+                }
+            });
+            
+        }
+    }
+
 }
 function minusMoveTimer(){
     var players = Object.getOwnPropertyNames(state.players)

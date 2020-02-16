@@ -3,10 +3,10 @@ const context = canvas.getContext('2d')
 const GRID = 40
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
+canvas.style.background = '#000'
 context.imageSmoothingEnabled = false
 const ViewX = 32
 const ViewY = 18
-
 function drawImage(img, x, y, width, height, deg, flip, flop, center,centerX,centerY) {
 
     context.save();
