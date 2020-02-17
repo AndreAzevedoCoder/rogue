@@ -121,6 +121,40 @@ class quadTree {
         return get
     }
 
+
+    getObjectsInRangeReturnObject(startx,starty,endx,endy,get){
+        if(startx < 0){
+            startx = 0
+        }
+        if(starty < 0){
+            starty = 0
+        }
+        if(get == undefined){
+            get = {}
+        }
+
+        this.objects.forEach(obj => {
+
+
+            if(obj.x >= startx && obj.x <= endx){
+                if(obj.y >= starty && obj.y <= endy){
+                    get[obj.id] = obj
+                }
+            }
+        });
+
+        if(this.divided == true){
+            this.nodes.forEach(node => {
+                if(node.width+node.x >= startx && node.x <= endx){
+                    if(node.height+node.y >= starty && node.y <= endy){
+                        return node.getObjectsInRangeReturnObject(startx,starty,endx,endy,get)
+                    }
+                }
+            });
+        }
+        return get
+    }
+
     getAllObjects(get){
         if(get == undefined){
             get = []

@@ -1,42 +1,36 @@
 const express = require('express')
 const socketio = require('socket.io');
-const game = require('./game');
 const app = express();
 
+const game = require('./game');
 const http = require('http');
 const server = http.createServer(app)
 const sockets = socketio(server)
-
-
-
-game.start()
 
 app.use(express.static(__dirname + "/public"));
 app.get('/', function(req, res){
     res.sendFile(__dirname + '/public/index.html');
 });
 
-server.listen(3000, function(){
-    console.log('listening on *:3000');
-});
+game.start()
 
 game.subscribe((command) => {
     if(command.sendTo == 'player'){
-        //console.log(`> Emitting ${command.type} to ${command.player}`)
+        console.log('>',command.player,command.type)
         sockets.in(command.player).emit(command.type,command)
     }
     if(command.sendTo == 'all'){
-        //console.log(`> Emitting ${command.type} to all`)
         sockets.emit(command.type,command)
     }
 });
 
 sockets.on('connection', function(socket){
+
     const playerID = socket.id
 
-    socket.on('playerConnect', (playerID) => {
+    socket.on('playerConnect', (command) => {
         console.log('>',playerID,'connected')
-        game.addPlayer(playerID)
+        game.addPlayer(command.playerID)
     })
 
     socket.on('disconnect', function(){
@@ -47,11 +41,13 @@ sockets.on('connection', function(socket){
     socket.on('clientInput', function(input){
         game.handleClientInput(input)
     });
+
     socket.on('playerClick', function(player){
         game.shoot(player)
     });
 
 });
 
-
-
+server.listen(3000, function(){
+    console.log('listening on *:3000');
+});

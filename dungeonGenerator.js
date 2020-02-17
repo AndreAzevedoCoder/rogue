@@ -88,16 +88,7 @@ var dungeon = {
     map: {},
     rooms: {}
 }
-function insertObject(x,y,data){
-    var object = {
-      x: x,
-      y: y,
-      // width: width,
-      // height: height,
-      data: data
-    }
-    dungeon.qtree.insertObject(object)
-}
+
 function start(width,height,roomCount){
     dungeon.qtree = new quadTree.quadTree(
       0,
@@ -115,4 +106,3 @@ function start(width,height,roomCount){
 module.exports = {
     start,
 }
-

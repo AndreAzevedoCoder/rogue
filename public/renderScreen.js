@@ -1,12 +1,20 @@
-const canvas = document.getElementById('canvas')
+const canvas = document.getElementById('screen')
 const context = canvas.getContext('2d')
 const GRID = 40
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 canvas.style.background = '#000'
 context.imageSmoothingEnabled = false
-const ViewX = 32
-const ViewY = 18
+
+var updatesScreen = []
+
+socket.on('renderScreen',(command) => {
+    sendInput()
+    updatesScreen.push(command)
+    state.myself = command.playerState
+    window.requestAnimationFrame(localRenderScreen)
+})
+
 function drawImage(img, x, y, width, height, deg, flip, flop, center,centerX,centerY) {
 
     context.save();
@@ -38,104 +46,74 @@ function drawImage(img, x, y, width, height, deg, flip, flop, center,centerX,cen
     
     context.restore();
 }
-var compositeTypes = [
-    'source-over','source-in','source-out','source-atop',
-    'destination-over','destination-in','destination-out',
-    'destination-atop','lighter','darker','copy','xor'
- ];
+
+const lerpFactor = 0.5
+function lerp (start, end, amt){
+    return (1-amt)*start+amt*end
+}
+
+var playerArray = []
+
+var beforeArray
+var afterArray
+
+var beforeNames
+var afterNames
 
 function localRenderScreen(){
-    context.setTransform(1,0,0,1,0,0);
-    context.clearRect(0, 0, canvas.width, canvas.height); 
-    const myself = state.myself
-    const playerView = state.aroundPlayer
+    if(updatesScreen.length > 1){
+        
+        const myself = state.myself
+        
+        var before = updatesScreen.shift() //updatesScreen.shift()
+        var after = updatesScreen[0] //updatesScreen.shift()
+        
+        beforeNames = Object.getOwnPropertyNames(before.aroundPlayer)
+        beforeArray = before.aroundPlayer
 
-    //HUD 
-    context.fillStyle = '#fff';
-    context.font = "30px Verdana";
+        afterArray = after.aroundPlayer
+        afterNames = Object.getOwnPropertyNames(after.aroundPlayer)
+        
 
-    if(state.playerState != undefined){
-        context.fillText(state.playerState.data.ammo+'/8', 10, 90);
+
     }
 
+}
 
+function lerpet(){
+    if(beforeNames != undefined){
+        context.setTransform(1,0,0,1,0,0);
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        for(var i = 0; i < beforeNames.length; i++){
+            var id = beforeNames[i]
 
-    for(var i = 0; i < playerView.length; i++){
-        var p = playerView[i]
-        var X = canvas.width/2+(p.x-myself.x)
-        var Y = canvas.height/2+(p.y-myself.y)
+            var object = beforeArray[id]
+            var myself = state.myself
 
+            var X = canvas.width/2+(object.x-myself.x)
+            var Y = canvas.height/2+(object.y-myself.y)
 
-        if(p.data.type == 'floor' ){
-            if(p.data.random == 0 ){
-                context.globalCompositeOperation = "destination-over";
-                context.drawImage(floor0,X,Y,GRID,GRID)
-            }
-            if(p.data.random == 1 ){
-                context.globalCompositeOperation = "destination-over";
-                context.drawImage(floor1,X,Y,GRID,GRID)
-            }
-            if(p.data.random == 2 ){
-                context.globalCompositeOperation = "destination-over";
-                context.drawImage(floor2,X,Y,GRID,GRID)
-            }
-            if(p.data.random == 3 ){
-                context.globalCompositeOperation = "destination-over";
-                context.drawImage(floor3,X,Y,GRID,GRID)
-            }
-            if(p.data.random == 4 ){
-                context.globalCompositeOperation = "destination-over";
-                context.drawImage(floor4,X,Y,GRID,GRID)
-            }
-        }
+            if(object.data.type == 'player'){
+                if(object.id != myself.id){
 
+                    object.x = lerp(object.x , afterArray[id].x, lerpFactor)
+                    object.y = lerp(object.y , afterArray[id].y, lerpFactor)
 
-        if(p.data.type == 'topwall' ){
-            context.drawImage(topwall0,X,Y,GRID,GRID)
-        } 
-        if(p.data.type == 'middlewall' ){
-            context.drawImage(middlewall0,X,Y,GRID,GRID)
-        } 
-        if(p.data.type == 'bottomwall' ){
-            drawImage(bottomwall0,X,Y,GRID,GRID,0,false,true)
-        } 
-
-
-
-        if(p.data.type == 'player' ){
-            var X = canvas.width/2+(p.x-myself.x)
-            var Y = canvas.height/2+(p.y-myself.y)
-            if(p.data.playerID != state.myself.playerID){
-                if(p.data.angle > 0){
-                    context.globalCompositeOperation = "source-over";
-                    drawImage(revolver,X+10,Y+2,20,28,p.data.angle,true,true,true,-24,-19)
-                    drawImage(playeridleside,X,Y,28,38,0)
-                }else{
-                    context.globalCompositeOperation = "source-over";
-                    drawImage(revolver,X+10,Y+2,20,28,p.data.angle,false,true,true,20,-16)
-                    drawImage(playeridleside,X,Y,28,38,0,true)
+                    context.beginPath();
+                    context.arc(X, Y, 15, 0, 2 * Math.PI, false);
+                    context.fillStyle = 'green';
+                    context.fill();
+                    context.stroke();
                 }
             }
-        } 
-        if(p.data.type == 'bullet' ){
-            var X = canvas.width/2+(p.x-myself.x)
-            var Y = canvas.height/2+(p.y-myself.y)
-            context.globalCompositeOperation = "source-over";
-            context.drawImage(bullet0,X,Y,14,14)
-        } 
+        }
     }
 
-        context.globalCompositeOperation = "source-over";
-        if(state.myself.angle > 0){
-            drawImage(revolver,canvas.width/2+10,canvas.height/2+2,20,28,state.myself.angle,true,true,true,-24,-19)
-            drawImage(playeridleside,canvas.width/2,canvas.height/2,28,38,0)
-        }else{
-            drawImage(revolver,canvas.width/2+10,canvas.height/2+2,20,28,state.myself.angle,false,true,true,20,-19)
-            drawImage(playeridleside,canvas.width/2,canvas.height/2,28,38,0,true)
-        }
+    context.beginPath();
+    context.arc(canvas.width/2, canvas.height/2, 15, 0, 2 * Math.PI, false);
+    context.fillStyle = 'green';
+    context.fill();
+    context.stroke();
 
-    
-
-    // context.fillStyle = 'yellow'
-    // context.fillRect((canvas.width/GRID * 0.5)*GRID,(canvas.height/GRID * 0.5)*GRID,GRID,GRID)
 }
+setInterval(lerpet,20)

@@ -1,4 +1,3 @@
-
 const keyState = {
     observers: []
 }
@@ -43,6 +42,7 @@ document.onmousemove = function(ve){
     var rY = cY + y - 8;
     state.myself.angle = Math.atan2(rX, rY) / Math.PI * 180;
 }
+
 document.addEventListener('keypress', handleKeydown)
 
 function handleKeydown(event) {
@@ -53,19 +53,56 @@ function handleKeydown(event) {
     }
 
 }
+
 document.addEventListener('keyup',function(e){
     const key = e.key
     delete keyDowns[key]
 },true);
+
 const timeMove = 0;
 const velocity = 12
 function sendInput(){
     if(Object.entries(keyDowns).length !== 0){
         const command = {
             type: 'move-player',
-            playerID: state.myself.playerID,
+            playerID: state.myself.id,
             keyDowns
         }
         socket.emit('clientInput', command)
+    }
+    handleInput()
+}
+
+function handleInput(){
+    const velocity = 55
+    var timer = 450
+    if(state.myself.moveTimer == 0){
+        console.log(state.myself.x,state.myself.y)
+
+        if(Object.entries(keyDowns).length !== 0){
+            if(keyDowns['w'] == true){
+                state.myself.y -= velocity
+                state.myself.moveTimer = timer
+                localRenderScreen()
+            }
+            if(keyDowns['s'] == true){
+                state.myself.y += velocity
+                state.myself.moveTimer = timer
+                localRenderScreen()
+            }
+            if(keyDowns['d'] == true){
+                state.myself.x += velocity
+                state.myself.moveTimer = timer
+                localRenderScreen()
+            }
+            if(keyDowns['a'] == true){
+                state.myself.x -= velocity
+                state.myself.moveTimer = timer
+                localRenderScreen()
+            }
+        }
+    }
+    if(state.myself.moveTimer > 0){
+        state.myself.moveTimer -= 20
     }
 }
