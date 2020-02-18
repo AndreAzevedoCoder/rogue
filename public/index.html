@@ -24,12 +24,16 @@
 
             socket.on('connect', () => {
                 const playerID = socket.id
+                state.myself.id = playerID
                 console.log(`Player connected on Client with id: ${playerID}`)
                 
                 const screen = document.getElementById('screen')
                 socket.emit('playerConnect',{
                     playerID: playerID
                 })
+            })
+            socket.on('addPlayer', (command) => {
+                state.myself = command.playerState
             })
             
             

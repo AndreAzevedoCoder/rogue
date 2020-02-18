@@ -42,6 +42,7 @@ function addPlayer(playerID) {
         type: 'addPlayer',
         sendTo: 'player',
         player: playerID,
+        playerState: state.players[playerID]
     })
 
     renderScreen(playerID)

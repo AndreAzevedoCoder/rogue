@@ -27,12 +27,15 @@ var keyDowns = {};
 function shoot(){
     socket.emit('playerClick',{playerID: state.myself.playerID,  x: state.myself.x,  y: state.myself.y,  angle: state.myself.angle})
 }
+
 document.onmousedown = function(v2){
     shootTimer = setInterval(shoot,10)
 }
+
 document.onmouseup = function (ve){
     clearInterval(shootTimer)
 }
+
 document.onmousemove = function(ve){
     let cX = -canvas.width / 2;
     let cY = -canvas.height / 2;
@@ -61,6 +64,7 @@ document.addEventListener('keyup',function(e){
 
 const timeMove = 0;
 const velocity = 12
+
 function sendInput(){
     if(Object.entries(keyDowns).length !== 0){
         const command = {
@@ -75,7 +79,7 @@ function sendInput(){
 
 function handleInput(){
     const velocity = 55
-    var timer = 450
+    var timer = 50
     if(state.myself.moveTimer == 0){
         console.log(state.myself.x,state.myself.y)
 

@@ -11,7 +11,7 @@ var updatesScreen = []
 socket.on('renderScreen',(command) => {
     sendInput()
     updatesScreen.push(command)
-    state.myself = command.playerState
+    //state.myself = command.playerState
     window.requestAnimationFrame(localRenderScreen)
 })
 
@@ -63,8 +63,6 @@ var afterNames
 function localRenderScreen(){
     if(updatesScreen.length > 1){
         
-        const myself = state.myself
-        
         var before = updatesScreen.shift() //updatesScreen.shift()
         var after = updatesScreen[0] //updatesScreen.shift()
         
@@ -73,37 +71,44 @@ function localRenderScreen(){
 
         afterArray = after.aroundPlayer
         afterNames = Object.getOwnPropertyNames(after.aroundPlayer)
-        
-
 
     }
 
 }
 
 function lerpet(){
-    if(beforeNames != undefined){
+    if(beforeNames != undefined && afterNames != undefined){
         context.setTransform(1,0,0,1,0,0);
         context.clearRect(0, 0, canvas.width, canvas.height);
+
+        var myself = state.myself
+
+        if(myself.x != afterArray[myself.id].x){
+            myself.x = lerp(myself.x , afterArray[myself.id].x, 0.5)
+            myself.y = lerp(myself.y , afterArray[myself.id].y, 0.5)
+        }
+
         for(var i = 0; i < beforeNames.length; i++){
             var id = beforeNames[i]
 
             var object = beforeArray[id]
-            var myself = state.myself
 
             var X = canvas.width/2+(object.x-myself.x)
             var Y = canvas.height/2+(object.y-myself.y)
 
-            if(object.data.type == 'player'){
-                if(object.id != myself.id){
-
-                    object.x = lerp(object.x , afterArray[id].x, lerpFactor)
-                    object.y = lerp(object.y , afterArray[id].y, lerpFactor)
-
-                    context.beginPath();
-                    context.arc(X, Y, 15, 0, 2 * Math.PI, false);
-                    context.fillStyle = 'green';
-                    context.fill();
-                    context.stroke();
+            if(afterArray[id] != undefined){
+                if(object.data.type == 'player'){
+                    if(object.id != myself.id){
+    
+                        object.x = lerp(object.x , afterArray[id].x, lerpFactor)
+                        object.y = lerp(object.y , afterArray[id].y, lerpFactor)
+    
+                        context.beginPath();
+                        context.arc(X, Y, 15, 0, 2 * Math.PI, false);
+                        context.fillStyle = 'green';
+                        context.fill();
+                        context.stroke();
+                    }
                 }
             }
         }
@@ -116,4 +121,4 @@ function lerpet(){
     context.stroke();
 
 }
-setInterval(lerpet,20)
+setInterval(lerpet,32)
