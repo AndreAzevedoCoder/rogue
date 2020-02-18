@@ -70,8 +70,8 @@ function renderScreen(playerID){
 }
 
 function handleClientInput(input){
-    const velocity = 20
     const timer = 50
+    const velocity = 20
 
     //state.dungeon.qtree.removeObject(player.playerPoint)
     //state.dungeon.qtree.insert(player.playerPoint)
@@ -80,6 +80,7 @@ function handleClientInput(input){
             if(input.keyDowns['w'] == true){
                 state.players[input.playerID].data.moveTimer = timer
                 state.players[input.playerID].y -= velocity
+                state.players[input.playerID].moveid = input.moveid
                 state.players[input.playerID].data.angle = input.angle
             }
             if(input.keyDowns['s'] == true){

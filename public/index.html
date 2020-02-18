@@ -20,7 +20,8 @@
             const socket = io()
             
             var state = {
-                myself: {}
+                myself: {},
+                moveid: 0
             }
 
             socket.on('connect', () => {

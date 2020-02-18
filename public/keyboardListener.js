@@ -71,8 +71,46 @@ function sendInput(){
             type: 'move-player',
             playerID: state.myself.id,
             angle: state.myself.angle,
+            moveid: state.moveid,
             keyDowns
         }
+        state.moveid++
+        console.log(state.moveid)
         socket.emit('clientInput', command)
+        localSentInput(keyDowns)
     }
 }
+
+function localSentInput(keyDowns){
+    var myself = state.myself
+    const timer = 50
+    var velocity = 20
+    if(myself.data.moveTimer == 0){
+        if(keyDowns['w'] == true){
+            myself.data.moveTimer = timer
+            myself.y -= velocity
+        }
+        if(keyDowns['s'] == true){
+            myself.data.moveTimer = timer
+            myself.y += velocity
+        }
+        if(keyDowns['d'] == true){
+            myself.data.moveTimer = timer
+            myself.x += velocity
+        }
+        if(keyDowns['a'] == true){
+            myself.data.moveTimer = timer
+            myself.x -= velocity
+        }
+    }
+}
+
+function minusByTime(){
+    if(state.myself.data != undefined){
+        var myself = state.myself
+        if(myself.data.moveTimer > 0){
+            myself.data.moveTimer -= 10
+        }
+    }
+}
+setInterval(minusByTime,10)
