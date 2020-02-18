@@ -34,7 +34,7 @@ function addPlayer(playerID) {
         y: playerY,
         width: 10,
         height: 10,
-        data: {type:"player",moveTimer: 0}
+        data: {type:"player", moveTimer: 0, angle: 0}
     }
 
     state.dungeon.qtree.insertObject(state.players[playerID])
@@ -70,8 +70,8 @@ function renderScreen(playerID){
 }
 
 function handleClientInput(input){
-    const velocity = 55
-    const timer = 450
+    const velocity = 20
+    const timer = 50
 
     //state.dungeon.qtree.removeObject(player.playerPoint)
     //state.dungeon.qtree.insert(player.playerPoint)
@@ -80,18 +80,22 @@ function handleClientInput(input){
             if(input.keyDowns['w'] == true){
                 state.players[input.playerID].data.moveTimer = timer
                 state.players[input.playerID].y -= velocity
+                state.players[input.playerID].data.angle = input.angle
             }
             if(input.keyDowns['s'] == true){
                 state.players[input.playerID].data.moveTimer = timer
                 state.players[input.playerID].y += velocity
+                state.players[input.playerID].data.angle = input.angle
             }
             if(input.keyDowns['d'] == true){
                 state.players[input.playerID].data.moveTimer = timer
                 state.players[input.playerID].x += velocity
+                state.players[input.playerID].data.angle = input.angle
             }
             if(input.keyDowns['a'] == true){
                 state.players[input.playerID].data.moveTimer = timer
                 state.players[input.playerID].x -= velocity
+                state.players[input.playerID].data.angle = input.angle
             }
         }
     }

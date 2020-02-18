@@ -71,12 +71,10 @@ function createRoom(startx,starty,roomtype){
                     
                 }catch(e){
                     
-                }
             }
-        }
+          }
       }
-
-
+    }
   }
 }
 

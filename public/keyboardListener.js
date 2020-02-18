@@ -70,43 +70,9 @@ function sendInput(){
         const command = {
             type: 'move-player',
             playerID: state.myself.id,
+            angle: state.myself.angle,
             keyDowns
         }
         socket.emit('clientInput', command)
-    }
-    handleInput()
-}
-
-function handleInput(){
-    const velocity = 55
-    var timer = 50
-    if(state.myself.moveTimer == 0){
-        console.log(state.myself.x,state.myself.y)
-
-        if(Object.entries(keyDowns).length !== 0){
-            if(keyDowns['w'] == true){
-                state.myself.y -= velocity
-                state.myself.moveTimer = timer
-                localRenderScreen()
-            }
-            if(keyDowns['s'] == true){
-                state.myself.y += velocity
-                state.myself.moveTimer = timer
-                localRenderScreen()
-            }
-            if(keyDowns['d'] == true){
-                state.myself.x += velocity
-                state.myself.moveTimer = timer
-                localRenderScreen()
-            }
-            if(keyDowns['a'] == true){
-                state.myself.x -= velocity
-                state.myself.moveTimer = timer
-                localRenderScreen()
-            }
-        }
-    }
-    if(state.myself.moveTimer > 0){
-        state.myself.moveTimer -= 20
     }
 }

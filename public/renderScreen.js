@@ -97,28 +97,71 @@ function lerpet(){
             var Y = canvas.height/2+(object.y-myself.y)
 
             if(afterArray[id] != undefined){
+
+                object.x = lerp(object.x , afterArray[id].x, lerpFactor)
+                object.y = lerp(object.y , afterArray[id].y, lerpFactor)
+
                 if(object.data.type == 'player'){
                     if(object.id != myself.id){
-    
-                        object.x = lerp(object.x , afterArray[id].x, lerpFactor)
-                        object.y = lerp(object.y , afterArray[id].y, lerpFactor)
-    
-                        context.beginPath();
-                        context.arc(X, Y, 15, 0, 2 * Math.PI, false);
-                        context.fillStyle = 'green';
-                        context.fill();
-                        context.stroke();
+                        if(object.data.angle > 0){
+                            context.globalCompositeOperation = "source-over";
+                            drawImage(revolver,X+10,Y+2,20,28,object.data.angle,true,true,true,-24,-19)
+                            drawImage(playeridleside,X,Y,28,38,0)
+                        }else{
+                            context.globalCompositeOperation = "source-over";
+                            drawImage(revolver,X+10,Y+2,20,28,object.data.angle,false,true,true,20,-16)
+                            drawImage(playeridleside,X,Y,28,38,0,true)
+                        }
                     }
                 }
+
+
+                if(object.data.type == 'floor' ){
+                    if(object.data.random == 0 ){
+                        context.globalCompositeOperation = "destination-over";
+                        context.drawImage(floor0,X,Y,GRID,GRID)
+                    }
+                    if(object.data.random == 1 ){
+                        context.globalCompositeOperation = "destination-over";
+                        context.drawImage(floor1,X,Y,GRID,GRID)
+                    }
+                    if(object.data.random == 2 ){
+                        context.globalCompositeOperation = "destination-over";
+                        context.drawImage(floor2,X,Y,GRID,GRID)
+                    }
+                    if(object.data.random == 3 ){
+                        context.globalCompositeOperation = "destination-over";
+                        context.drawImage(floor3,X,Y,GRID,GRID)
+                    }
+                    if(object.data.random == 4 ){
+                        context.globalCompositeOperation = "destination-over";
+                        context.drawImage(floor4,X,Y,GRID,GRID)
+                    }
+                }
+        
+        
+                if(object.data.type == 'topwall' ){
+                    context.drawImage(topwall0,X,Y,GRID,GRID)
+                } 
+                if(object.data.type == 'middlewall' ){
+                    context.drawImage(middlewall0,X,Y,GRID,GRID)
+                } 
+                if(object.data.type == 'bottomwall' ){
+                    drawImage(bottomwall0,X,Y,GRID,GRID,0,false,true)
+                } 
+
             }
         }
     }
 
-    context.beginPath();
-    context.arc(canvas.width/2, canvas.height/2, 15, 0, 2 * Math.PI, false);
-    context.fillStyle = 'green';
-    context.fill();
-    context.stroke();
+    context.globalCompositeOperation = "source-over";
+    if(state.myself.angle > 0){
+        drawImage(revolver,canvas.width/2+10,canvas.height/2+2,20,28,state.myself.angle,true,true,true,-24,-19)
+        drawImage(playeridleside,canvas.width/2,canvas.height/2,28,38,0)
+    }else{
+        drawImage(revolver,canvas.width/2+10,canvas.height/2+2,20,28,state.myself.angle,false,true,true,20,-19)
+        drawImage(playeridleside,canvas.width/2,canvas.height/2,28,38,0,true)
+    }
 
 }
 setInterval(lerpet,32)
