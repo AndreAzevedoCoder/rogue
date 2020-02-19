@@ -20,12 +20,12 @@ function makeid(length) {
        result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
     return result;
- }
+}
 
 var keyDowns = {};  
 
 function shoot(){
-    socket.emit('playerClick',{playerID: state.myself.playerID,  x: state.myself.x,  y: state.myself.y,  angle: state.myself.angle})
+    socket.emit('playerClick',state.myself)
 }
 
 document.onmousedown = function(v2){

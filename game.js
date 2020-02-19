@@ -17,7 +17,18 @@ const height = 10000
 const roomCount = 300
 
 var state = {
-    players: {}
+    players: {},
+    bullets: [],
+    weapons: {
+
+        0: {
+            maxAmmo: 8,
+            reload: 650,
+            reloadTimer: 1200,
+            damage: 1,
+        }
+
+    }
 }
 function start(){
     state.dungeon = dungeonGenerator.start(width,height,roomCount);
@@ -34,7 +45,19 @@ function addPlayer(playerID) {
         y: playerY,
         width: 10,
         height: 10,
-        data: {type:"player", moveTimer: 0, angle: 0}
+        data: {
+            type: 'player',
+            angle: 0,
+            
+            MaxHP: 10,
+            HP: 10,
+            moveTimer: 0,
+
+            weapon: 0,
+            ammo: state.weapons[0].maxAmmo,
+            shootTimer: 0,
+            reloadTimer: 0,
+        }
     }
 
     state.dungeon.qtree.insertObject(state.players[playerID])
@@ -70,61 +93,193 @@ function renderScreen(playerID){
 }
 
 function handleClientInput(input){
-    const timer = 50
+    const timer = 30
     const velocity = 20
+    const player = state.players[input.playerID]
 
-    //state.dungeon.qtree.removeObject(player.playerPoint)
-    //state.dungeon.qtree.insert(player.playerPoint)
-    if(state.players[input.playerID] !== undefined){
-        if(state.players[input.playerID].data.moveTimer == 0){
+    if(player !== undefined){
+        if(player.data.moveTimer == 0){
             if(input.keyDowns['w'] == true){
-                state.players[input.playerID].data.moveTimer = timer
-                state.players[input.playerID].y -= velocity
-                state.players[input.playerID].moveid = input.moveid
-                state.players[input.playerID].data.angle = input.angle
+                player.data.moveTimer = timer
+                player.y -= velocity
+                player.moveid = input.moveid
+                player.data.angle = input.angle
             }
             if(input.keyDowns['s'] == true){
-                state.players[input.playerID].data.moveTimer = timer
-                state.players[input.playerID].y += velocity
-                state.players[input.playerID].data.angle = input.angle
+                player.data.moveTimer = timer
+                player.y += velocity
+                player.data.angle = input.angle
             }
             if(input.keyDowns['d'] == true){
-                state.players[input.playerID].data.moveTimer = timer
-                state.players[input.playerID].x += velocity
-                state.players[input.playerID].data.angle = input.angle
+                player.data.moveTimer = timer
+                player.x += velocity
+                player.data.angle = input.angle
             }
             if(input.keyDowns['a'] == true){
-                state.players[input.playerID].data.moveTimer = timer
-                state.players[input.playerID].x -= velocity
-                state.players[input.playerID].data.angle = input.angle
+                player.data.moveTimer = timer
+                player.x -= velocity
+                player.data.angle = input.angle
             }
         }
     }
 }
 
-function shoot(){
+function makeRandomId(length) {
+    var result           = '';
+    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for ( var i = 0; i < length; i++ ) {
+       result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+ }
 
-}
+ var bulletIntervals = []
 
+ function shoot(command){
+     if(command.x !== NaN){
+         const player = state.players[command.id]
+         const angle = Math.floor(command.angle)
+         if(player !== undefined){
+             if(player.data.shootTimer == 0){
+                 if(player.data.ammo > 0){
+                     player.data.ammo--
+                     player.data.shootTimer += state.weapons[player.data.weapon].reload
+                     player.data.angle = angle
+                     var velocity = 20;
+                     var duration = 35
+                     if(angle > 0){
+                         var bullet = {
+                             id: makeRandomId(10),
+                             x: Math.cos(angle*Math.PI/180)*6+30+command.x,
+                             y: command.y+12,
+                             width: 14,
+                             height: 14,
+
+                             data: {
+                             type: 'bullet',
+                             playerID: player.id,
+                             damage: state.weapons[player.data.weapon].damage,
+                             angle: angle,
+                             velocity: velocity,
+                             duration: duration
+                            }
+                         }
+         
+                         state.dungeon.qtree.insertObject(bullet);
+                         state.bullets[state.bullets.length] = bullet
+ 
+                     }else{
+         
+                         var bullet = {
+                             id: makeRandomId(10),
+                             x: -Math.cos(angle*Math.PI/180)*6+command.x-15,
+                             y: command.y+12,
+                             width: 14,
+                             height: 14,
+                             data: {
+                                 type: 'bullet',
+                                 playerID: player.id,
+                                 angle: angle,
+                                 velocity: velocity,
+                                 damage: state.weapons[player.data.weapon].damage,
+                                 duration: duration
+                                }
+                         }
+         
+                         state.dungeon.qtree.insertObject(bullet);
+                         state.bullets[state.bullets.length] = bullet
+ 
+                     }
+                 }else{
+                     var a = setInterval(function(){
+                        player.data.ammo = 8
+                        clearInterval(a)
+                     },state.weapons[player.data.weapon].reloadTimer)
+                 }
+             }
+         }
+         
+     }
+ }
+
+var time = 0;
 function sendWorldStatus(){
-    var players = Object.getOwnPropertyNames(state.players)
-    players.forEach(player => {
-        state.dungeon.qtree.getObjectAndMove(state.players[player],state.players[player].x,state.players[player].y)
-        renderScreen(player)
-    })
-}
+    time++
 
-function minusByTime(){
+    //EVERY 10 MS
     var players = Object.getOwnPropertyNames(state.players)
     players.forEach(player => {
         if(state.players[player].data.moveTimer > 0){
             state.players[player].data.moveTimer -= 10
         }
+        if(state.players[player].data.shootTimer > 0){
+            state.players[player].data.shootTimer -= 10
+        }
     });
+
+    //EVERY 100 MS
+    if(time >= 10){
+        time = 0
+
+        //PLAYER
+
+        var players = Object.getOwnPropertyNames(state.players)
+        players.forEach(player => {
+            state.dungeon.qtree.getObjectAndMove(state.players[player],state.players[player].x,state.players[player].y)
+            renderScreen(player)
+        })
+
+        //BULLET
+
+        var bulletArray = Object.getOwnPropertyNames(state.bullets)
+        for(var i = 0; i < Object.keys(state.bullets).length; i++){
+            let bullet = state.bullets[bulletArray[i]]
+    
+    
+            var angle = bullet.data.angle * Math.PI/180
+            var x = Math.cos(angle);
+            var y = Math.sin(angle);
+            bullet.x += y * bullet.data.velocity
+            bullet.y += x * bullet.data.velocity
+            state.dungeon.qtree.getObjectAndMove(bullet,bullet.x,bullet.y)
+    
+            bullet.data.duration--
+
+            if(bullet.data.duration <= 0){
+                state.dungeon.qtree.deleteObject(bullet.id)
+                delete state.bullets[bulletArray[i]]
+            }
+
+            var nextToBullet = state.dungeon.qtree.checkCollision( bullet )
+            if(nextToBullet != null){
+                nextToBullet.forEach(next => {
+                    if(next.data.solid == true){
+                        state.dungeon.qtree.deleteObject(bullet.id)
+                        delete state.bullets[bulletArray[i]]
+                        return
+                    }
+                    if(next.data.type == 'player'){
+                        //console.log(next.id , bullet)
+                        if(next.data.id != bullet.data.playerID){
+
+                            state.dungeon.qtree.deleteObject(bullet.id)
+                            next.data.HP -= bullet.data.damage
+                            console.log(next.data.HP,'/',next.data.MaxHP)
+                            delete state.bullets[bulletArray[i]]
+                            return
+
+                        }
+                    }
+                });           
+            }
+
+        }
+    }
 }
 
-setInterval(minusByTime,10)
-setInterval(sendWorldStatus,100)
+//setInterval(minusByTime,10)
+setInterval(sendWorldStatus,10)
 
 module.exports = {
     subscribe,

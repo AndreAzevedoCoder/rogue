@@ -95,9 +95,10 @@ function start(width,height,roomCount){
       10000,
     );
 
-    for(var i = 0; i < roomCount; i++){
-      createRoom(Math.random()*width,Math.random()*height,0)
-    }
+    // for(var i = 0; i < roomCount; i++){
+    //   createRoom(Math.random()*width,Math.random()*height,0)
+    // }
+    createRoom(1000,1000,0)
     return dungeon;
 }
 

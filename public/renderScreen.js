@@ -140,6 +140,10 @@ function lerpet(){
                     }
                 }
         
+                if(object.data.type == 'bullet' ){
+                    context.globalCompositeOperation = "source-over";
+                    context.drawImage(bullet0,X,Y,14,14)
+                } 
         
                 if(object.data.type == 'topwall' ){
                     context.drawImage(topwall0,X,Y,GRID,GRID)
