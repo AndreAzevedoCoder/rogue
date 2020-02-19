@@ -75,9 +75,7 @@ function sendInput(){
             keyDowns
         }
         state.moveid++
-        console.log(state.moveid)
         socket.emit('clientInput', command)
-        localSentInput(keyDowns)
     }
 }
 

@@ -14,7 +14,7 @@ function notifyAll(command) {
 
 const width = 10000
 const height = 10000
-const roomCount = 15
+const roomCount = 300
 
 var state = {
     players: {}
@@ -122,7 +122,6 @@ function minusByTime(){
         }
     });
 }
-
 
 setInterval(minusByTime,10)
 setInterval(sendWorldStatus,100)

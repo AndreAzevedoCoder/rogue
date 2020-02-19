@@ -77,16 +77,17 @@ function localRenderScreen(){
 }
 
 function lerpet(){
-    if(beforeNames != undefined && afterNames != undefined){
+    if(beforeNames != undefined && afterArray != undefined){
         context.setTransform(1,0,0,1,0,0);
         context.clearRect(0, 0, canvas.width, canvas.height);
 
         var myself = state.myself
 
-        if(myself.x != afterArray[myself.id].x){
-            myself.x = lerp(myself.x , afterArray[myself.id].x, 0.5)
-            myself.y = lerp(myself.y , afterArray[myself.id].y, 0.5)
-        }
+
+        myself.x = lerp(myself.x , afterArray[myself.id].x, 0.5)
+        myself.y = lerp(myself.y , afterArray[myself.id].y, 0.5)
+    
+
 
         for(var i = 0; i < beforeNames.length; i++){
             var id = beforeNames[i]
