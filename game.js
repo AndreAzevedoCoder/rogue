@@ -271,7 +271,6 @@ function sendWorldStatus(){
             bullet.userData.duration--
 
             if(bullet.userData.duration <= 0){
-                console.log("delet")
                 const quadtree = state.dungeon.quadtree
                 const range = quadtree.returnAroundRange(bullet,1)
                 quadtree.delete(range,bullet.id)
