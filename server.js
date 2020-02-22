@@ -48,6 +48,6 @@ sockets.on('connection', function(socket){
 
 });
 
-server.listen(80, function(){
+server.listen(process.env.PORT || 3000, function(){
     console.log('listening on *:80');
 });
