@@ -62,7 +62,7 @@ function createRoom(startx,starty,roomtype){
                         dungeon.qtree.insertObject({id: makeid(10),x:X,y:Y,width: GRID,height:GRID,data:{type: 'topwall', solid: true}})
                       }
                       if(h == roomHeightMedia-2){
-                        dungeon.qtree.insertObject({id: makeid(10),x:X,y:Y,width: GRID,height:GRID,data:{type: 'middlewall', solid: true}})
+                        dungeon.qtree.insertObject({id: makeid(10),x:X,y:Y,width: GRID,height:GRID,data:{type: 'middlewall'}})
                       }
                     }else{
                       dungeon.qtree.insertObject({id: makeid(10),x:X,y:Y,width: GRID,height:GRID,data:{type: 'floor', random: random(5)}})

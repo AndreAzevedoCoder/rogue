@@ -81,11 +81,7 @@ class quadTree {
         return get
     }
     getObjectsAround (objectToFind,around){
-        if(objectToFind.data.velocity == undefined){
-            return this.getObjectsInRange(objectToFind.x-objectToFind.width-around,  objectToFind.y-objectToFind.height-around,  objectToFind.x+objectToFind.width+around,  objectToFind.y+objectToFind.height+around)
-        }else{
-            return this.getObjectsInRange(objectToFind.x-objectToFind.width-around-objectToFind.data.velocity,  objectToFind.y-objectToFind.height-around-objectToFind.data.velocity,  objectToFind.x+objectToFind.width+around+objectToFind.data.velocity,  objectToFind.y+objectToFind.height+around+objectToFind.data.velocity)
-        }
+        return this.getObjectsInRange(objectToFind.x-objectToFind.width-around,  objectToFind.y-objectToFind.height-around,  objectToFind.x+objectToFind.width+around,  objectToFind.y+objectToFind.height+around)
     }
 
     getObjectsInRange(startx,starty,endx,endy,get){
@@ -114,40 +110,6 @@ class quadTree {
                 if(node.width+node.x >= startx && node.x <= endx){
                     if(node.height+node.y >= starty && node.y <= endy){
                         return node.getObjectsInRange(startx,starty,endx,endy,get)
-                    }
-                }
-            });
-        }
-        return get
-    }
-
-
-    getObjectsInRangeReturnObject(startx,starty,endx,endy,get){
-        if(startx < 0){
-            startx = 0
-        }
-        if(starty < 0){
-            starty = 0
-        }
-        if(get == undefined){
-            get = {}
-        }
-
-        this.objects.forEach(obj => {
-
-
-            if(obj.x >= startx && obj.x <= endx){
-                if(obj.y >= starty && obj.y <= endy){
-                    get[obj.id] = obj
-                }
-            }
-        });
-
-        if(this.divided == true){
-            this.nodes.forEach(node => {
-                if(node.width+node.x >= startx && node.x <= endx){
-                    if(node.height+node.y >= starty && node.y <= endy){
-                        return node.getObjectsInRangeReturnObject(startx,starty,endx,endy,get)
                     }
                 }
             });
@@ -232,6 +194,39 @@ class quadTree {
         }
     }
 
+    getObjectsInRangeReturnObject(startx,starty,endx,endy,get){
+        if(startx < 0){
+            startx = 0
+        }
+        if(starty < 0){
+            starty = 0
+        }
+        if(get == undefined){
+            get = {}
+        }
+
+        this.objects.forEach(obj => {
+
+
+            if(obj.x >= startx && obj.x <= endx){
+                if(obj.y >= starty && obj.y <= endy){
+                    get[obj.id] = obj
+                }
+            }
+        });
+
+        if(this.divided == true){
+            this.nodes.forEach(node => {
+                if(node.width+node.x >= startx && node.x <= endx){
+                    if(node.height+node.y >= starty && node.y <= endy){
+                        return node.getObjectsInRangeReturnObject(startx,starty,endx,endy,get)
+                    }
+                }
+            });
+        }
+        return get
+    }
+
     checkCrossTheLine(objectToFind,i){
         if(objectToFind.x > this.x && objectToFind.x < this.width+this.x){
             if(objectToFind.y > this.y && objectToFind.y < this.height+this.y){
@@ -249,9 +244,11 @@ class quadTree {
     checkCollision(objectToFind){
         var objects = null
         var objectsNotMe = []
-
-        objects = this.getObjectsAround(objectToFind,0)
-
+        if(objectToFind.speed == undefined ){
+            objects = this.getObjectsAround(objectToFind,0)
+        }else{
+            objects = this.getObjectsAround(objectToFind,0)
+        }
         if(objects != null){
             objects.forEach(notMe => {
                 if(notMe.id != objectToFind.id){

@@ -48,10 +48,11 @@ function addPlayer(playerID) {
         data: {
             type: 'player',
             angle: 0,
-            
+
             MaxHP: 10,
             HP: 10,
             moveTimer: 0,
+            velocity: 20,
 
             weapon: 0,
             ammo: state.weapons[0].maxAmmo,
@@ -94,7 +95,7 @@ function renderScreen(playerID){
 
 function handleClientInput(input){
     const timer = 30
-    const velocity = 20
+    const velocity = state.players[input.playerID].data.velocity
     const player = state.players[input.playerID]
 
     if(player !== undefined){
@@ -199,7 +200,6 @@ function makeRandomId(length) {
                  }
              }
          }
-         
      }
  }
 
@@ -227,6 +227,7 @@ function sendWorldStatus(){
         var players = Object.getOwnPropertyNames(state.players)
         players.forEach(player => {
             state.dungeon.qtree.getObjectAndMove(state.players[player],state.players[player].x,state.players[player].y)
+            console.log( state.dungeon.qtree.getObject(state.players[player]) )
             renderScreen(player)
         })
 
@@ -261,7 +262,7 @@ function sendWorldStatus(){
                     }
                     if(next.data.type == 'player'){
                         //console.log(next.id , bullet)
-                        if(next.data.id != bullet.data.playerID){
+                        if(next.id != bullet.data.playerID){
 
                             state.dungeon.qtree.deleteObject(bullet.id)
                             next.data.HP -= bullet.data.damage
@@ -273,7 +274,6 @@ function sendWorldStatus(){
                     }
                 });           
             }
-
         }
     }
 }
