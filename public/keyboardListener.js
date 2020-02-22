@@ -22,10 +22,15 @@ function makeid(length) {
     return result;
 }
 
-var keyDowns = {};  
+var keyDowns = {};
 
 function shoot(){
-    socket.emit('playerClick',state.myself)
+    socket.emit('playerClick',{
+        id: state.myself.userData.id,
+        angle: state.angle,
+        x: state.myself.x,
+        y: state.myself.y
+    })
 }
 
 document.onmousedown = function(v2){
@@ -43,7 +48,7 @@ document.onmousemove = function(ve){
     let y = ve.offsetY;
     var rX = cX + x - 8;
     var rY = cY + y - 8;
-    state.myself.angle = Math.atan2(rX, rY) / Math.PI * 180;
+    state.angle = Math.atan2(rX, rY) / Math.PI * 180;
 }
 
 document.addEventListener('keypress', handleKeydown)
@@ -69,8 +74,8 @@ function sendInput(){
     if(Object.entries(keyDowns).length !== 0){
         const command = {
             type: 'move-player',
-            playerID: state.myself.id,
-            angle: state.myself.angle,
+            playerID: state.myself.userData.id,
+            angle: state.angle,
             moveid: state.moveid,
             keyDowns
         }

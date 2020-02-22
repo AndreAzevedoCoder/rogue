@@ -21,21 +21,20 @@
             
             var state = {
                 myself: {},
-                moveid: 0
             }
 
             socket.on('connect', () => {
-                const playerID = socket.id
-                state.myself.id = playerID
-                console.log(`Player connected on Client with id: ${playerID}`)
+                state.myself.userData = {}
+                state.myself.userData.id = socket.id
+                console.log(`Player connected on Client with id: ${socket.id}`)
                 
-                const screen = document.getElementById('screen')
                 socket.emit('playerConnect',{
-                    playerID: playerID
+                    playerID: socket.id
                 })
             })
+
             socket.on('addPlayer', (command) => {
-                state.myself = command.playerState
+                state.myself = command.myself
             })
             
             

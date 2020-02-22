@@ -20,12 +20,12 @@ game.subscribe((command) => {
         sockets.in(command.player).emit(command.type,command)
     }
     if(command.sendTo == 'all'){
+        console.log('>','all',command.type)
         sockets.emit(command.type,command)
     }
 });
 
 sockets.on('connection', function(socket){
-
     const playerID = socket.id
 
     socket.on('playerConnect', (command) => {
@@ -43,7 +43,7 @@ sockets.on('connection', function(socket){
     });
 
     socket.on('playerClick', function(player){
-        game.shoot(player)
+        game.playerShoot(player)
     });
 
 });

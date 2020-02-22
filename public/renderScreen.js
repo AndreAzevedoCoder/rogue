@@ -10,8 +10,8 @@ var updatesScreen = []
 
 socket.on('renderScreen',(command) => {
     sendInput()
+    //state.myself = command.myself
     updatesScreen.push(command)
-    //state.myself = command.playerState
     window.requestAnimationFrame(localRenderScreen)
 })
 
@@ -61,16 +61,17 @@ var beforeNames
 var afterNames
 
 function localRenderScreen(){
+
     if(updatesScreen.length > 1){
         
         var before = updatesScreen.shift() //updatesScreen.shift()
         var after = updatesScreen[0] //updatesScreen.shift()
         
-        beforeNames = Object.getOwnPropertyNames(before.aroundPlayer)
-        beforeArray = before.aroundPlayer
+        beforeNames = Object.getOwnPropertyNames(before.playerView)
+        beforeArray = before.playerView
 
-        afterArray = after.aroundPlayer
-        afterNames = Object.getOwnPropertyNames(after.aroundPlayer)
+        afterArray = after.playerView
+        afterNames = Object.getOwnPropertyNames(after.playerView)
 
     }
 
@@ -83,11 +84,8 @@ function lerpet(){
 
         var myself = state.myself
 
-
-        myself.x = lerp(myself.x , afterArray[myself.id].x, 0.5)
-        myself.y = lerp(myself.y , afterArray[myself.id].y, 0.5)
-    
-
+        myself.x = lerp(myself.x , afterArray[myself.userData.id].x, 0.5)
+        myself.y = lerp(myself.y , afterArray[myself.userData.id].y, 0.5)
 
         for(var i = 0; i < beforeNames.length; i++){
             var id = beforeNames[i]
@@ -102,71 +100,69 @@ function lerpet(){
                 object.x = lerp(object.x , afterArray[id].x, lerpFactor)
                 object.y = lerp(object.y , afterArray[id].y, lerpFactor)
 
-                if(object.data.type == 'player'){
-                    if(object.id != myself.id){
-                        if(object.data.angle > 0){
+                if(object.userData.type == 'player'){
+                    if(object.userData.id != myself.userData.id){
+                        if(object.userData.angle > 0){
                             context.globalCompositeOperation = "source-over";
-                            drawImage(revolver,X+10,Y+2,20,28,object.data.angle,true,true,true,-24,-19)
+                            drawImage(revolver,X+10,Y+2,20,28,object.userData.angle,true,true,true,-24,-19)
                             drawImage(playeridleside,X,Y,28,38,0)
                         }else{
                             context.globalCompositeOperation = "source-over";
-                            drawImage(revolver,X+10,Y+2,20,28,object.data.angle,false,true,true,20,-16)
+                            drawImage(revolver,X+10,Y+2,20,28,object.userData.angle,false,true,true,20,-16)
                             drawImage(playeridleside,X,Y,28,38,0,true)
                         }
                     }
                 }
 
-
-                if(object.data.type == 'floor' ){
-                    if(object.data.random == 0 ){
+                if(object.userData.type == 'floor' ){
+                    if(object.userData.random == 0 ){
                         context.globalCompositeOperation = "destination-over";
                         context.drawImage(floor0,X,Y,GRID,GRID)
                     }
-                    if(object.data.random == 1 ){
+                    if(object.userData.random == 1 ){
                         context.globalCompositeOperation = "destination-over";
                         context.drawImage(floor1,X,Y,GRID,GRID)
                     }
-                    if(object.data.random == 2 ){
+                    if(object.userData.random == 2 ){
                         context.globalCompositeOperation = "destination-over";
                         context.drawImage(floor2,X,Y,GRID,GRID)
                     }
-                    if(object.data.random == 3 ){
+                    if(object.userData.random == 3 ){
                         context.globalCompositeOperation = "destination-over";
                         context.drawImage(floor3,X,Y,GRID,GRID)
                     }
-                    if(object.data.random == 4 ){
+                    if(object.userData.random == 4 ){
                         context.globalCompositeOperation = "destination-over";
                         context.drawImage(floor4,X,Y,GRID,GRID)
                     }
                 }
         
-                if(object.data.type == 'bullet' ){
+                if(object.userData.type == 'bullet' ){
                     context.globalCompositeOperation = "source-over";
                     context.drawImage(bullet0,X,Y,14,14)
                 } 
         
-                if(object.data.type == 'topwall' ){
+                if(object.userData.type == 'topwall' ){
                     context.drawImage(topwall0,X,Y,GRID,GRID)
                 } 
-                if(object.data.type == 'middlewall' ){
+                if(object.userData.type == 'middlewall' ){
                     context.drawImage(middlewall0,X,Y,GRID,GRID)
                 } 
-                if(object.data.type == 'bottomwall' ){
+                if(object.userData.type == 'bottomwall' ){
                     drawImage(bottomwall0,X,Y,GRID,GRID,0,false,true)
                 } 
-
             }
         }
     }
 
     context.globalCompositeOperation = "source-over";
-    if(state.myself.angle > 0){
-        drawImage(revolver,canvas.width/2+10,canvas.height/2+2,20,28,state.myself.angle,true,true,true,-24,-19)
+    if(state.angle > 0){
+        drawImage(revolver,canvas.width/2+10,canvas.height/2+2,20,28,state.angle,true,true,true,-24,-19)
         drawImage(playeridleside,canvas.width/2,canvas.height/2,28,38,0)
     }else{
-        drawImage(revolver,canvas.width/2+10,canvas.height/2+2,20,28,state.myself.angle,false,true,true,20,-19)
+        drawImage(revolver,canvas.width/2+10,canvas.height/2+2,20,28,state.angle,false,true,true,20,-19)
         drawImage(playeridleside,canvas.width/2,canvas.height/2,28,38,0,true)
     }
 
 }
-setInterval(lerpet,32)
+setInterval(lerpet,20)
