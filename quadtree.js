@@ -1,8 +1,4 @@
-// Daniel Shiffman
-// http://codingtra.in
-// http://patreon.com/codingtrain
-
-// QuadTree
+var game = require('./game');
 
 class Point {
   constructor(x, y, data) {
@@ -99,6 +95,8 @@ class Circle {
   }
 }
 
+var atribuido = false
+var mainQuad = null
 class QuadTree {
   constructor(boundary, capacity) {
     if (!boundary) {
@@ -117,8 +115,14 @@ class QuadTree {
     this.capacity = capacity;
     this.points = [];
     this.divided = false;
-  }
 
+    if(atribuido == false){
+      mainQuad = this
+      atribuido = true
+      console.log(mainQuad)
+    }
+  }
+  
   static create() {
     let DEFAULT_CAPACITY = 8;
     if (arguments.length === 0) {
@@ -241,6 +245,7 @@ class QuadTree {
   }
 
   insert(point) {
+    console.log("inseriu",point.userData.type)
     if (!this.boundary.contains(point)) {
       return false;
     }
@@ -292,7 +297,7 @@ class QuadTree {
       return
     }
 
-
+    
     for( var i = 0; i < this.points.length; i++ ){
       var p = this.points[i]
       if (range.contains(p)) {
@@ -310,52 +315,64 @@ class QuadTree {
     }
   }
 
-  movePoint(range,id,x,y) {
-
-
-    // if (!range.intersects(this.boundary)) {
-    //   return
-    // }
-
+  movePoint(id,x,y) {
 
     for( var i = 0; i < this.points.length; i++ ){
       var p = this.points[i]
-      //if (range.contains(p)) {
         if(p.userData.id == id){
           this.points[i].x = x;
           this.points[i].y = y;
+          return this.checkCrossTheLine(this.points[i],i)
         }
-      //}
     }
 
     if (this.divided) {
-      this.northwest.movePoint(range,id,x,y);
-      this.northeast.movePoint(range,id,x,y);
-      this.southwest.movePoint(range,id,x,y);
-      this.southeast.movePoint(range,id,x,y);
+      this.northwest.movePoint(id,x,y);
+      this.northeast.movePoint(id,x,y);
+      this.southwest.movePoint(id,x,y);
+      this.southeast.movePoint(id,x,y);
+    }
+  }
+  checkCrossTheLine(object,index){
+    const boundary = this.boundary
+    if(object.x > boundary.x && object.x < boundary.object+boundary.x){
+      if(object.y > boundary.y && object.y < boundary.object+boundary.y){
+      }else{
+          this.points.splice(index,1);
+          console.log(mainQuad)
+          mainQuad.insert(object)
+      }
+    }else{
+        this.points.splice(index,1);
+        //console.log(mainQuad)
+        console.log(object.x,object.y)
+        mainQuad.insert(object)
     }
   }
 
   returnAroundRange(object,rangeInt){
+    //&& object.userData.type != 'player'
     if(object.userData.velocity != undefined){
       var velocity = object.userData.velocity
       return new Rectangle(
-        object.x-rangeInt-velocity,
-        object.y-rangeInt-velocity,
-        object.x+rangeInt+velocity,
-        object.y+rangeInt+velocity
+        object.x, //-rangeInt-velocity-object.w
+        object.y, //-rangeInt-velocity-object.h
+        rangeInt+velocity+object.w,
+        rangeInt+velocity+object.h
       )
 
     }else{
 
       return new Rectangle(
-        object.x-rangeInt,
-        object.y-rangeInt,
-        object.x+rangeInt,
-        object.y+rangeInt
+        object.x,
+        object.y,
+        rangeInt+object.w,
+        rangeInt+object.h
       )
 
     }
+
+
   }
   deleteInRange(range) {
     //Index of what needs to be deleted

@@ -83,7 +83,6 @@ function createRoom(startx,starty,roomtype){
                           {
                             id: makeid(10),
                             type: 'middlewall',
-                            solid: true
                           }
                         )
 
@@ -99,7 +98,6 @@ function createRoom(startx,starty,roomtype){
                           id: makeid(10),
                           random: random(4),
                           type: 'floor',
-                          solid: true
                         }
                       )
                     }
@@ -137,7 +135,7 @@ function start(width,height,roomCount){
     // for(var i = 0; i < roomCount; i++){
     //   createRoom(Math.random()*width,Math.random()*height,0)
     // }
-    createRoom(1500,1500,0)
+    createRoom(15000,15000,0)
     return dungeon;
 }
 

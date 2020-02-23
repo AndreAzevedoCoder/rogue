@@ -16,11 +16,11 @@ game.start()
 
 game.subscribe((command) => {
     if(command.sendTo == 'player'){
-        console.log('>',command.player,command.type)
+        //console.log('>',command.player,command.type)
         sockets.in(command.player).emit(command.type,command)
     }
     if(command.sendTo == 'all'){
-        console.log('>','all',command.type)
+        //console.log('>','all',command.type)
         sockets.emit(command.type,command)
     }
 });
