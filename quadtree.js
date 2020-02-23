@@ -95,7 +95,6 @@ class Circle {
   }
 }
 
-var atribuido = false
 var mainQuad = null
 class QuadTree {
   constructor(boundary, capacity) {
@@ -116,10 +115,8 @@ class QuadTree {
     this.points = [];
     this.divided = false;
 
-    if(atribuido == false){
+    if(mainQuad == undefined){
       mainQuad = this
-      atribuido = true
-      console.log(mainQuad)
     }
   }
   
@@ -245,11 +242,10 @@ class QuadTree {
   }
 
   insert(point) {
-    console.log("inseriu",point.userData.type)
     if (!this.boundary.contains(point)) {
       return false;
     }
-
+    
     if (this.points.length < this.capacity) {
       this.points.push(point);
       return true;
@@ -334,18 +330,16 @@ class QuadTree {
     }
   }
   checkCrossTheLine(object,index){
+    
     const boundary = this.boundary
     if(object.x > boundary.x && object.x < boundary.object+boundary.x){
       if(object.y > boundary.y && object.y < boundary.object+boundary.y){
       }else{
           this.points.splice(index,1);
-          console.log(mainQuad)
           mainQuad.insert(object)
       }
     }else{
         this.points.splice(index,1);
-        //console.log(mainQuad)
-        console.log(object.x,object.y)
         mainQuad.insert(object)
     }
   }

@@ -100,7 +100,6 @@ function removePlayer(playerID){
     const player = state.players[playerID]
     if(player != undefined){
         const range = quadtree.returnAroundRange(player,1)
-        console.log(quadtree.query(range))
         quadtree.delete(range,playerID)
         //delete state.players[playerID]
     }
@@ -153,18 +152,10 @@ function handleClientInput(input){
                 player.x -= velocity
                 player.userData.angle = input.angle
             }
-            const quadtree = state.dungeon.quadtree
-            var brange = quadtree.returnAroundRange(player,1)
         }
     }
 }
 
-subscribe((command) => {
-    if(command.sendTo == 'game'){
-        //console.log('>',command.player,command.type)
-        console.log("Oi")
-    }
-});
 function quadInsert(object){
     return state.dungeon.quadtree.insert(object)
 }
@@ -271,7 +262,7 @@ function sendWorldStatus(){
 
         var players = Object.getOwnPropertyNames(state.players)
         players.forEach(player => {
-            state.dungeon.quadtree.movePoint(state.players[player],state.players[player].x,state.players[player].y)
+            state.dungeon.quadtree.movePoint(state.players[player].userData.id,state.players[player].x,state.players[player].y)
             renderScreen( state.players[player] )
         })
 
@@ -336,7 +327,6 @@ function sendWorldStatus(){
                             if(next.userData.id != bullet.userData.playerID){
     
                                 next.userData.HP -= bullet.userData.damage
-                                console.log(next.userData.HP,'/',next.userData.MaxHP)
                                 const range = quadtree.returnAroundRange(bullet,1)
                                 quadtree.delete(range,bullet.userData.id)
                                 delete state.bullets[bullet.userData.id]
